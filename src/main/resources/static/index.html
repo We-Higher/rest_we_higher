@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script type="text/javascript">
+	$(document).ready(function(){
+		$("#loginf").hide();
+		$("#myinfof").hide();
+		let flag = sessionStorage.getItem("loginflag");
+		if(flag!=null && flag=='true'){
+			$("#alogin").show();
+			$("#blogin").hide();
+		}else{
+			$("#alogin").hide();
+			$("#blogin").show();
+		}
+	});
+$(document).ready(function(){
+	$("#loginfbtn").click(function(){
+			$("#loginf").show();
+		});
+	$("#loginbtn").click(function(){
+			let param = {id:$("#id").val(), pwd:$("#pwd").val()};
+			$.ajax({
+				url:"/login",
+				type:"post",
+				data:param,
+				dataType:'json',
+				success: function(res){//res: 받은 응답
+					if(res.flag){
+						let token = res.token;
+						sessionStorage.setItem("token", token);  //sessionStorage.getItem("token")
+						sessionStorage.setItem("loginflag", true);
+						location.reload();
+					}else{
+						alert('로그인 실패');
+					}
+					$("#loginf").hide();
+				},
+				error:function(){
+					alert("error");
+				}
+			});
+		});
+		$("#myinfobtn").on("click", function(){
+			let t = sessionStorage.getItem("token");
+			$.ajax({
+           		url:'/auth/info',
+           		type:'get',
+           		dataType:'json',
+           		headers:{'Authorization':t},
+				success:function(res){
+					if(res.flag){
+						$("#eid").val(res.m.id);
+						$("#epwd").val(res.m.pwd);
+						$("#ename").val(res.m.name);
+						$("#eemail").val(res.m.email);
+					    $("#myinfof").show();
+					}else{
+					    alert('인증 실패');
+					}
+				},
+				error:function(req, status){//req:요청객체, status:상태값
+					alert(status);
+				}
+			});
+		});
+		$("#logoutbtn").on("click", function(){
+			sessionStorage.removeItem("token");
+			sessionStorage.removeItem("loginflag");
+			location.reload();
+		});
+		$("#closebtn").on("click", function(){
+			$("#eid").val("");
+			$("#epwd").val("");
+			$("#ename").val("");
+			$("#eemail").val("");
+			$("#myinfof").hide();
+		});
+});
+
+</script>
+</head>
+<body>
+<h3>토큰인증예제</h3>
+<input type="button" id="myinfobtn" value="myinfo">
+<form id="loginf">
+	id:<input type="text" name="id" id="id"><br/>
+	pwd:<input type="password" name="pwd" id="pwd"><br/>	
+	<input type="button" id="loginbtn" value="login">
+</form>
+<div id="blogin">
+	<input type="button" id="loginfbtn" value="login">
+	<input type="button" id="joinfbtn" value="join">
+</div>
+<div id="alogin">
+	
+	<input type="button" id="logoutbtn" value="logout">
+</div>
+<form id="myinfof">
+	id:<input type="text" name="id" id="eid" readonly><br/>
+	pwd:<input type="text" name="pwd" id="epwd"><br/>
+	name:<input type="text" name="name" id="ename"><br/>
+	email:<input type="text" name="email" id="eemail" readonly><br/>	
+	<input type="button" id="editbtn" value="수정">
+	<input type="button" id="closebtn" value="창닫기">
+</form>
+</body>
+</html>
+
+
+
+
+
