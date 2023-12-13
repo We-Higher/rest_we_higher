@@ -95,7 +95,7 @@ public class MemberService {
 	}
 
 	
-	public void delMember(String id) {
+	public void delMember(Long id) {
 		//deleteById(값): pk 기준으로 삭제
 		dao.deleteById(id);
 	}
