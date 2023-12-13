@@ -28,7 +28,7 @@ public class Member {
     @Id
     @SequenceGenerator(name = "seq_gen", sequenceName = "seq_member1", allocationSize = 1)
     // 시퀀스 생성. 생성한 시퀀스 이름: seq_board
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_member1")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
     private Long id;
     @Column(unique = true)
     private String username; // 회원 ID
