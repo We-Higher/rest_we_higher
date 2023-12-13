@@ -16,10 +16,9 @@ public class ChatController {
     private final ChatMessageService chatMessageService;
 
     @MessageMapping("/chat/message")
-    public void message(ChatMessageDto chatMessageDto, ModelMap map) {
-//        if (ChatMessage.MessageType.ENTER.equals(chatMessageDto.getType()))
-//            chatMessageDto.setMessage(chatMessageDto.getSender() + "님이 입장하셨습니다.");
-        messagingTemplate.convertAndSend("/sub/chat/room/" + chatMessageDto.getRoomId(), chatMessageDto);
+    public void message(ChatMessageDto chatMessageDto) {
+        System.out.println("chatMessageDto = " + chatMessageDto);
+        messagingTemplate.convertAndSend("/sub/chat/room/"+chatMessageDto.getRoomId(), chatMessageDto);
     }
 
     @PostMapping("/chat/message/add")
