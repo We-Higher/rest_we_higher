@@ -58,30 +58,29 @@ public class Member {
     
  // MemberDto -> Member
     public Member toEntity(MemberDto memberDto) {
-        return Member.builder()
-                .id(memberDto.getId())
-                .username(memberDto.getUsername())
-                .pwd(memberDto.getPwd())
-                .name(memberDto.getName())
-                .email(memberDto.getEmail())
-                .phone(memberDto.getPhone())
-                .address(memberDto.getAddress())
-                .companyName(memberDto.getCompanyName())
-                .deptCode(memberDto.getDeptCode())
-                .deptName(memberDto.getDeptName())
-                .companyRank(memberDto.getCompanyRank())
-                .companyRankName(memberDto.getCompanyRankName())
-                .newNo(memberDto.getNewNo())
-                .comCall(memberDto.getComCall())
-                .isMaster(memberDto.getIsMaster())
-                .status(memberDto.getStatus())
-                .cstatus(memberDto.getCstatus())
-                .originFname(memberDto.getOriginFname())
-                .thumbnailFname(memberDto.getThumbnailFname())
-                .newMemNo(memberDto.getNewMemNo())
-                .remain(memberDto.getRemain())
-                .monthMember(memberDto.getMonthMember())
-                .build();
+        return new Member(
+                memberDto.getId(),
+                memberDto.getUsername(),
+                memberDto.getPwd(),
+                memberDto.getName(),
+                memberDto.getEmail(),
+                memberDto.getPhone(),
+                memberDto.getAddress(),
+                memberDto.getCompanyName(),
+                memberDto.getDeptCode(),
+                memberDto.getDeptName(),
+                memberDto.getCompanyRank(),
+                memberDto.getCompanyRankName(),
+                memberDto.getNewNo(),
+                memberDto.getComCall(),
+                memberDto.getIsMaster(),
+                memberDto.getStatus(),
+                memberDto.getCstatus(),
+                memberDto.getOriginFname(),
+                memberDto.getThumbnailFname(),
+                memberDto.getNewMemNo(),
+                memberDto.getRemain(),
+                memberDto.getMonthMember());
     }
     
     // MemberJoinDto -> Member
