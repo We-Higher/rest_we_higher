@@ -38,7 +38,7 @@ public class ChatRoomController {
         return hmap;
     }
 
-    // 참여한 채팅방 반환
+    // 참여한 채팅방 목록 반환
     @GetMapping("/room")
     @ResponseBody
     public Map getByParticipantId() {
@@ -82,12 +82,17 @@ public class ChatRoomController {
     // 채팅방 detail
     @GetMapping("/room/{roomId}")
     public Map roomDetail(@PathVariable int roomId) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        MemberDto mdto = memberService.getMember(loginMember.getUsername());
+
         ChatRoomDto chatRoomDto = chatRoomService.getById(roomId);
         List<ChatMessage> clist = chatMessageService.getByRoomId(roomId);
         List<MemberDto> nlist = memberService.getNonParticipantsMembers(roomId);
 
         Map map = new HashMap();
 
+        map.put("user", mdto);
         map.put("chatRoom", chatRoomDto);
         map.put("clist", clist);
         map.put("nlist", nlist);

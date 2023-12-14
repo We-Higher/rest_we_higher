@@ -35,8 +35,6 @@ public class SecurityConfiguration {
 						.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
 						.requestMatchers("/","/join", "/error", "/login", "/read-img/**").permitAll()
 						.requestMatchers("/auth/**").authenticated()
-//						.requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-//						.requestMatchers("/ws-stomp/**").permitAll()
 						.anyRequest().permitAll()
 						)
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
