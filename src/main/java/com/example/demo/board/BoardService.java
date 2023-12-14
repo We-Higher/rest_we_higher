@@ -85,7 +85,7 @@ public class BoardService {
     
     // 조회수 증가
     public void editCnt(int num) {
-        dao.updateCnt(num);
+    	dao.updateCnt(num);
     }
     
     public Page<Board> getBoardList(int page) {

@@ -80,6 +80,7 @@ public class ScheduleController {
             dto.setCnt(1);
         }
         ScheduleDto s = service.save(dto);
+      
         Map map = new HashMap();
 
         Map<String, Object> newEvnet = new HashMap<>();
@@ -89,6 +90,7 @@ public class ScheduleController {
         newEvnet.put("end", s.getEndDate());
         newEvnet.put("check", s.getCnt());
         map.put("newEvent", newEvnet);
+
         return map;
     }
 
