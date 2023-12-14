@@ -109,7 +109,7 @@ public class approvalController {
         return map;
     }
 
-    @GetMapping("/expense/edit")
+    /*@GetMapping("/expense/edit")
     public String editExpense(ExpenseDto edto, Model map) {
         edto = eservice.getById(edto.getExpenseNum());
         map.addAttribute("edto", edto);
@@ -141,7 +141,7 @@ public class approvalController {
 
     @GetMapping("/report/editread")
     public String editReportRead(ReportDto rdto, Model map) {
-        rdto = rservice.getById(rdto.getReportNum());
+        rdto = rservice.getById(rdto.getNum());
         System.out.println("rdto = " + rdto);
         map.addAttribute("rdto", rdto);
         return "approval/edit/editReportRead";
