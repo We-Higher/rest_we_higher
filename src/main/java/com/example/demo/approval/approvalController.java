@@ -16,22 +16,28 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
-@PreAuthorize("isAuthenticated()")
-@Controller
-@RequestMapping("/approval")
+@RestController
+@CrossOrigin(origins = "*")
+@RequestMapping("/auth/approval")
 public class approvalController {
 	
     @Autowired
@@ -51,47 +57,56 @@ public class approvalController {
     }
 
     @GetMapping("/draft")
-    public void list(Model map) {
+    public Map list() {
         ArrayList<ExpenseDto> elist = eservice.getAll();
         ArrayList<ReportDto> rlist = rservice.getAll();
         ArrayList<VacationDto> vlist = vservice.getAll();
-        map.addAttribute("elist", elist);
-        map.addAttribute("rlist", rlist);
-        map.addAttribute("vlist", vlist);
+		Map map = new HashMap();
+        map.put("elist", elist);
+        map.put("rlist", rlist);
+        map.put("vlist", vlist);
+		return map;
     }
 
     @GetMapping("/mydraft")
-    public void listByMember(Model map) {
-        ArrayList<ExpenseDto> elist = eservice.getAll();
-        ArrayList<ReportDto> rlist = rservice.getAll();
-        ArrayList<VacationDto> vlist = vservice.getAll();
-        map.addAttribute("elist", elist);
-        map.addAttribute("rlist", rlist);
-        map.addAttribute("vlist", vlist);
+    public Map listByMember() {
+        ArrayList<ExpenseDto> elist = eservice.getMy();
+        ArrayList<ReportDto> rlist = rservice.getMy();
+        ArrayList<VacationDto> vlist = vservice.getMy();
+		Map map = new HashMap();
+        map.put("elist", elist);
+        map.put("rlist", rlist);
+        map.put("vlist", vlist);
+		return map;
     }
 
     @GetMapping("/process")
-    public void listById(Model map, Principal principal) {
-        ArrayList<ExpenseDto> elist = eservice.getAll();
-        ArrayList<ReportDto> rlist = rservice.getAll();
-        ArrayList<VacationDto> vlist = vservice.getAll();
-        MemberDto mdto = mservice.getMember(principal.getName());
-        map.addAttribute("m", mdto);
-        map.addAttribute("elist", elist);
-        map.addAttribute("rlist", rlist);
-        map.addAttribute("vlist", vlist);
+    public Map listById() {
+    	
+        ArrayList<ExpenseDto> elist = eservice.getMyProcess();
+        ArrayList<ReportDto> rlist = rservice.getMyProcess();
+        ArrayList<VacationDto> vlist = vservice.getMyProcess();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		Map map = new HashMap();
+        map.put("mdto", mdto);
+        map.put("elist", elist);
+        map.put("rlist", rlist);
+        map.put("vlist", vlist);
+        return map;
     }
 
     @GetMapping("/myrefuse")
-    public void RefuseListById(Model map, Principal principal) {
-        ArrayList<ExpenseDto> elist = eservice.getAll();
-        ArrayList<ReportDto> rlist = rservice.getAll();
-        ArrayList<VacationDto> vlist = vservice.getAll();
-        MemberDto mdto = mservice.getMember(principal.getName());
-        map.addAttribute("m", mdto);
-        map.addAttribute("elist", elist);
-        map.addAttribute("rlist", rlist);
-        map.addAttribute("vlist", vlist);
+    public Map RefuseListById() {
+        ArrayList<ExpenseDto> elist = eservice.getMyRefuse();
+        ArrayList<ReportDto> rlist = rservice.getMyRefuse();
+        ArrayList<VacationDto> vlist = vservice.getMyRefuse();
+		Map map = new HashMap();
+        map.put("elist", elist);
+        map.put("rlist", rlist);
+        map.put("vlist", vlist);
+        return map;
     }
 
     @GetMapping("/expense/edit")

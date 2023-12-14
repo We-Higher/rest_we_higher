@@ -1,5 +1,7 @@
 package com.example.demo.approval.vacation;
 
+import com.example.demo.approval.report.Report;
+import com.example.demo.approval.report.ReportDto;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 
@@ -12,6 +14,8 @@ import com.example.demo.schedule.ScheduleDto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -45,6 +49,53 @@ public class VacationService {
 
     public ArrayList<VacationDto> getAll() {
         ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findAll(Sort.by(Sort.Direction.DESC, "vacationNum"));
+        ArrayList<VacationDto> list2 = new ArrayList<>();
+        for (Vacation v : list) {
+            list2.add(new VacationDto(v.getVacationNum(), v.getMember(), v.getType(), v.getStartDate(), v.getEndDate(), v.getReason(), v.getWdate(), v.getStatus(), v.getRstatus(), v.getApproval1(), v.getApproval2(), v.getApproval1rank(), v.getApproval2rank(), v.getApp1username(), v.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<VacationDto> getMy(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findByMemberUsernameOrderByVacationNumDesc(mdto.getUsername());
+        ArrayList<VacationDto> list2 = new ArrayList<>();
+        for (Vacation v : list) {
+            list2.add(new VacationDto(v.getVacationNum(), v.getMember(), v.getType(), v.getStartDate(), v.getEndDate(), v.getReason(), v.getWdate(), v.getStatus(), v.getRstatus(), v.getApproval1(), v.getApproval2(), v.getApproval1rank(), v.getApproval2rank(), v.getApp1username(), v.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<VacationDto> getMyProcess(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findByApp1usernameAndStatusAndRstatusOrderByVacationNumDesc(mdto.getUsername(),0,0);
+        ArrayList<Vacation> listt = (ArrayList<Vacation>) dao.findByApp2usernameAndStatusAndRstatusOrderByVacationNumDesc(mdto.getUsername(),0,0);
+        ArrayList<Vacation> listtt = (ArrayList<Vacation>) dao.findByApp2usernameAndStatusAndRstatusOrderByVacationNumDesc(mdto.getUsername(),1,0);
+        ArrayList<VacationDto> list2 = new ArrayList<>();
+        for (Vacation v : list) {
+            list2.add(new VacationDto(v.getVacationNum(), v.getMember(), v.getType(), v.getStartDate(), v.getEndDate(), v.getReason(), v.getWdate(), v.getStatus(), v.getRstatus(), v.getApproval1(), v.getApproval2(), v.getApproval1rank(), v.getApproval2rank(), v.getApp1username(), v.getApp2username()));
+        }
+        for (Vacation v : listt) {
+            list2.add(new VacationDto(v.getVacationNum(), v.getMember(), v.getType(), v.getStartDate(), v.getEndDate(), v.getReason(), v.getWdate(), v.getStatus(), v.getRstatus(), v.getApproval1(), v.getApproval2(), v.getApproval1rank(), v.getApproval2rank(), v.getApp1username(), v.getApp2username()));
+        }
+        for (Vacation v : listtt) {
+            list2.add(new VacationDto(v.getVacationNum(), v.getMember(), v.getType(), v.getStartDate(), v.getEndDate(), v.getReason(), v.getWdate(), v.getStatus(), v.getRstatus(), v.getApproval1(), v.getApproval2(), v.getApproval1rank(), v.getApproval2rank(), v.getApp1username(), v.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<VacationDto> getMyRefuse(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findByMemberUsernameAndRstatusOrderByVacationNumDesc(mdto.getUsername(), -1);
         ArrayList<VacationDto> list2 = new ArrayList<>();
         for (Vacation v : list) {
             list2.add(new VacationDto(v.getVacationNum(), v.getMember(), v.getType(), v.getStartDate(), v.getEndDate(), v.getReason(), v.getWdate(), v.getStatus(), v.getRstatus(), v.getApproval1(), v.getApproval2(), v.getApproval1rank(), v.getApproval2rank(), v.getApp1username(), v.getApp2username()));

@@ -1,11 +1,16 @@
 package com.example.demo.approval.report;
 
+import com.example.demo.approval.expense.Expense;
+import com.example.demo.approval.expense.ExpenseDto;
 import com.example.demo.member.MemberDto;
+import com.example.demo.member.MemberService;
 
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -16,6 +21,9 @@ import java.util.ArrayList;
 public class ReportService {
     @Autowired
     private ReportDao dao;
+    
+    @Autowired
+    private MemberService mservice;
     
     //자바에서 script 사용하기
     public static void init(HttpServletResponse response) {
@@ -31,6 +39,53 @@ public class ReportService {
 
     public ArrayList<ReportDto> getAll() {
         ArrayList<Report> list = (ArrayList<Report>) dao.findAll(Sort.by(Sort.Direction.DESC, "reportNum"));
+        ArrayList<ReportDto> list2 = new ArrayList<>();
+        for (Report r : list) {
+            list2.add(new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<ReportDto> getMy(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Report> list = (ArrayList<Report>) dao.findByMemberUsernameOrderByReportNumDesc(mdto.getUsername());
+        ArrayList<ReportDto> list2 = new ArrayList<>();
+        for (Report r : list) {
+            list2.add(new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<ReportDto> getMyProcess(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Report> list = (ArrayList<Report>) dao.findByApp1usernameAndStatusAndRstatusOrderByReportNumDesc(mdto.getUsername(),0,0);
+        ArrayList<Report> listt = (ArrayList<Report>) dao.findByApp2usernameAndStatusAndRstatusOrderByReportNumDesc(mdto.getUsername(),0,0);
+        ArrayList<Report> listtt = (ArrayList<Report>) dao.findByApp2usernameAndStatusAndRstatusOrderByReportNumDesc(mdto.getUsername(),1,0);
+        ArrayList<ReportDto> list2 = new ArrayList<>();
+        for (Report r : list) {
+            list2.add(new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username()));
+        }
+        for (Report r : listt) {
+            list2.add(new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username()));
+        }
+        for (Report r : listtt) {
+            list2.add(new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<ReportDto> getMyRefuse(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Report> list = (ArrayList<Report>) dao.findByMemberUsernameAndRstatusOrderByReportNumDesc(mdto.getUsername(), -1);
         ArrayList<ReportDto> list2 = new ArrayList<>();
         for (Report r : list) {
             list2.add(new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username()));
