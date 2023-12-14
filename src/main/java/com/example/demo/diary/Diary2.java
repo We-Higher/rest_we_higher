@@ -30,7 +30,7 @@ import lombok.ToString;
 public class Diary2 {
 	@Id // pk지정
 	@SequenceGenerator(name = "seq_gen", sequenceName = "seq_diary1", allocationSize = 1) 																	// 이름:seq_board2
-	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_diary1")
+	@GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
 	private int num;
 	private Date wdate;
 	@ManyToOne
