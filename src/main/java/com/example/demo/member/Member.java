@@ -55,8 +55,8 @@ public class Member {
     @Column(columnDefinition = "int default 15", nullable = false)
     private int remain; //연차 잔여일
     private int monthMember;
-    
- // MemberDto -> Member
+
+    // MemberDto -> Member
     public Member toEntity(MemberDto memberDto) {
         return new Member(
                 memberDto.getId(),
@@ -80,11 +80,12 @@ public class Member {
                 memberDto.getThumbnailFname(),
                 memberDto.getNewMemNo(),
                 memberDto.getRemain(),
-                memberDto.getMonthMember());
+                memberDto.getMonthMember()
+        );
     }
-    
+
     // MemberJoinDto -> Member
-    public Member toEntity (MemberJoinDto memberJoinDto) {
+    public Member toEntity(MemberJoinDto memberJoinDto) {
         return Member.builder()
                 .username(memberJoinDto.getUsername())
                 .pwd(memberJoinDto.getPwd())
@@ -101,4 +102,9 @@ public class Member {
                 .status(memberJoinDto.getStatus())
                 .build();
     }
+
+    public static Member of(MemberDto memberDto) {
+        return new Member().toEntity(memberDto);
+    }
 }
+

@@ -12,38 +12,38 @@ import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import jakarta.servlet.DispatcherType;
-import jakarta.servlet.Filter;
 import lombok.RequiredArgsConstructor;
+
 @RequiredArgsConstructor
 @Configuration
 public class SecurityConfiguration {
-	private final JwtTokenProvider jwtTokenProvider;
-	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return PasswordEncoderFactories.createDelegatingPasswordEncoder();
-	}
+    private final JwtTokenProvider jwtTokenProvider;
 
-	@Bean
-	public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-			throws Exception {
-		return authenticationConfiguration.getAuthenticationManager();
-	}
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
 
-	@Bean
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-		http.csrf().disable()
-				.authorizeHttpRequests((authz) -> authz
-						.dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
-						.requestMatchers("/","/join", "/error", "/login", "/read-img/**").permitAll()
-						.requestMatchers("/auth/**").authenticated()
-						.anyRequest().permitAll()
-						)
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
+    }
+
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeHttpRequests((authz) -> authz
+                        .dispatcherTypeMatchers(DispatcherType.FORWARD).permitAll()
+                        .requestMatchers("/", "/join", "/error", "/login", "/read-img/**").permitAll()
+                        .requestMatchers("/auth/**").authenticated()
+                        .anyRequest().permitAll()
+                )
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider),
-                         UsernamePasswordAuthenticationFilter.class);
-                
-        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-			//	.httpBasic();
-		return http.build();
-	}
+                        UsernamePasswordAuthenticationFilter.class);
 
+        http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+        //	.httpBasic();
+        return http.build();
+    }
 }
