@@ -1,7 +1,13 @@
 package com.example.demo.member;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
+import com.example.demo.chat.ChatRoom;
+import com.example.demo.chat.ChatRoomDao;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,13 +15,12 @@ import org.springframework.stereotype.Service;
 
 import com.example.demo.member.dto.MemberJoinDto;
 
+@RequiredArgsConstructor
 @Service
 public class MemberService {
-	@Autowired
-	private MemberDao dao;
-	
-	@Autowired
-	private PasswordEncoder passwordEncoder;
+	private final MemberDao dao;
+	private final PasswordEncoder passwordEncoder;
+    private final ChatRoomDao chatRoomDao;
 	
     public MemberDto create(MemberJoinDto memberJoinDto) {
         Member member = new Member().toEntity(memberJoinDto);
@@ -99,4 +104,19 @@ public class MemberService {
 		//deleteById(값): pk 기준으로 삭제
 		dao.deleteById(id);
 	}
+
+    public List<MemberDto> getByIdNot(Long id) {
+        return dao.findByIdNot(id, Sort.by(Sort.Direction.DESC, "companyRank")).stream().map(MemberDto::of).collect(Collectors.toList());
+    }
+
+    // 채팅방 미참여자 목록
+    public List<MemberDto> getNonParticipantsMembers(int roomId) {
+        ChatRoom chatRoom = chatRoomDao.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid roomId: " + roomId));
+        Set<MemberDto> participants = chatRoom.getParticipants().stream().map(MemberDto::of).collect(Collectors.toSet());;
+
+        List<MemberDto> allMembers = dao.findAll().stream().map(MemberDto::of).collect(Collectors.toList());
+        allMembers.removeAll(participants);
+
+        return allMembers;
+    }
 }
