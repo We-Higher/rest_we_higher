@@ -68,8 +68,9 @@ public class BoardController {
 	}
 
 	// 글 상세페이지
-	@GetMapping("/{num}")
+	@RequestMapping("/{num}")
 	public Map get(@PathVariable("num") int num) {
+
 		Map map = new HashMap();
 		BoardDto b = bservice.getBoard(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();

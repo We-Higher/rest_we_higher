@@ -58,6 +58,23 @@ public class MemberController {
 		map.put("flag", flag);
 		return map;
 	}
+	
+	@GetMapping("/auth/mypage")
+	public Map mypage() {
+		Map map = new HashMap();
+		boolean flag = true;
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();//로그인 아이디 추출
+		MemberDto mdto = service.getMember(id);
+		System.out.println(mdto);
+		if (mdto == null) {
+			flag = false;
+		} else {
+			map.put("mdto", mdto);
+		}
+		map.put("flag", flag);
+		return map;
+	}
 
 	@GetMapping("/auth/info")
 	public Map myinfo() {
