@@ -1,5 +1,6 @@
 package com.example.demo.approval.report;
 
+import com.example.demo.board.BoardDto;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
@@ -11,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -49,7 +51,8 @@ public class ReportController {
 		map.put("mdto", mdto);
 		return map;
 	}
-
+	
+	//품의서 기안
 	@PostMapping("/report")
 	public Map addReport(ReportDto dto) {
 
@@ -64,6 +67,20 @@ public class ReportController {
 		rservice.saveReport(dto);
 		Map map = new HashMap();
 		map.put("dto", dto);
+		return map;
+	}
+	
+	@GetMapping("/report/editread/{num}")
+	public Map get(@PathVariable("num") int num) {
+
+		Map map = new HashMap();
+		ReportDto rdto = rservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto,", mdto);
+		map.put("dto", rdto);
+		System.out.println("성공");
 		return map;
 	}
 }
