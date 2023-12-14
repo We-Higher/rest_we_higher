@@ -26,42 +26,44 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth/approval")
 public class ReportController {
-	
-    @Autowired
-    private ReportService rservice;
-    @Autowired
-    private MemberService mservice;
 
-    //자바에서 script 사용하기
-    public static void init(HttpServletResponse response) {
-        response.setContentType("text/html; charset=utf-8");
-        response.setCharacterEncoding("utf-8");
-    }
-    
-    //품의서
-    @GetMapping("/report")
-    public Map report() {
-    	
+	@Autowired
+	private ReportService rservice;
+	@Autowired
+	private MemberService mservice;
+
+	// 자바에서 script 사용하기
+	public static void init(HttpServletResponse response) {
+		response.setContentType("text/html; charset=utf-8");
+		response.setCharacterEncoding("utf-8");
+	}
+
+	// 품의서
+	@GetMapping("/report")
+	public Map report() {
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
 		Map map = new HashMap();
 		map.put("mdto", mdto);
-        return map;
-    }
+		return map;
+	}
 
-    @PostMapping("/report")
-    public void addReport(HttpServletResponse response, ReportDto dto, Principal principal){
-        try {
-            init(response);
-            PrintWriter out = response.getWriter();
-            MemberDto mdto = mservice.getMember(principal.getName());
-            dto.setMember(new Member(mdto.getId(),mdto.getUsername(),mdto.getPwd(),mdto.getName(),mdto.getEmail(),mdto.getPhone(),mdto.getAddress(),mdto.getCompanyName(),mdto.getDeptCode(),mdto.getDeptName(),mdto.getCompanyRank(),mdto.getCompanyRankName(),mdto.getNewNo(),mdto.getComCall(),mdto.getIsMaster(),mdto.getStatus(), mdto.getCstatus(), mdto.getOriginFname(),mdto.getThumbnailFname(),mdto.getNewMemNo(),mdto.getRemain(),mdto.getMonthMember()));
-            rservice.saveReport(dto);
-            out.println(String.format("<script>window.close();</script>"));
-            out.flush();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+	@PostMapping("/report")
+	public Map addReport(ReportDto dto) {
+
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		dto.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(),
+				mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(),
+				mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(),
+				mdto.getIsMaster(), mdto.getStatus(), mdto.getCstatus(), mdto.getOriginFname(),
+				mdto.getThumbnailFname(), mdto.getNewMemNo(), mdto.getRemain(), mdto.getMonthMember()));
+		rservice.saveReport(dto);
+		Map map = new HashMap();
+		map.put("dto", dto);
+		return map;
+	}
 }

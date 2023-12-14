@@ -2,9 +2,13 @@ package com.example.demo.approval.expense;
 
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
+import com.example.demo.member.MemberService;
+
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
@@ -15,6 +19,9 @@ import java.util.ArrayList;
 public class ExpenseService {
     @Autowired
     private ExpenseDao dao;
+    
+    @Autowired
+    private MemberService mservice;
     
     public static void init(HttpServletResponse response) {
         response.setContentType("text/html; charset=utf-8");
@@ -28,6 +35,54 @@ public class ExpenseService {
 
     public ArrayList<ExpenseDto> getAll(){
         ArrayList<Expense> list = (ArrayList<Expense>) dao.findAll(Sort.by(Sort.Direction.DESC, "expenseNum"));
+        ArrayList<ExpenseDto> list2 = new ArrayList<>();
+        for(Expense e : list){
+            list2.add(new ExpenseDto(e.getExpenseNum(),e.getMember(),e.getTitle(),e.getContent(),e.getWdate(),e.getCategory(),e.getDetail(),e.getSum(),e.getNote(),e.getStatus(), e.getRstatus(), e.getApproval1(),e.getApproval2(), e.getApproval1rank(), e.getApproval2rank(), e.getApp1username(), e.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<ExpenseDto> getMy(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Expense> list = (ArrayList<Expense>) dao.findByMemberUsernameOrderByExpenseNumDesc(mdto.getUsername());
+        ArrayList<ExpenseDto> list2 = new ArrayList<>();
+        for(Expense e : list){
+            list2.add(new ExpenseDto(e.getExpenseNum(),e.getMember(),e.getTitle(),e.getContent(),e.getWdate(),e.getCategory(),e.getDetail(),e.getSum(),e.getNote(),e.getStatus(), e.getRstatus(), e.getApproval1(),e.getApproval2(), e.getApproval1rank(), e.getApproval2rank(), e.getApp1username(), e.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<ExpenseDto> getMyProcess(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Expense> list = (ArrayList<Expense>) dao.findByApp1usernameAndStatusAndRstatusOrderByExpenseNumDesc(mdto.getUsername(),0,0);
+        ArrayList<Expense> listt = (ArrayList<Expense>) dao.findByApp2usernameAndStatusAndRstatusOrderByExpenseNumDesc(mdto.getUsername(),0,0);
+        ArrayList<Expense> listtt = (ArrayList<Expense>) dao.findByApp2usernameAndStatusAndRstatusOrderByExpenseNumDesc(mdto.getUsername(),1,0);
+        
+        ArrayList<ExpenseDto> list2 = new ArrayList<>();
+        for(Expense e : list){
+            list2.add(new ExpenseDto(e.getExpenseNum(),e.getMember(),e.getTitle(),e.getContent(),e.getWdate(),e.getCategory(),e.getDetail(),e.getSum(),e.getNote(),e.getStatus(), e.getRstatus(), e.getApproval1(),e.getApproval2(), e.getApproval1rank(), e.getApproval2rank(), e.getApp1username(), e.getApp2username()));
+        }
+        for(Expense e : listt){
+            list2.add(new ExpenseDto(e.getExpenseNum(),e.getMember(),e.getTitle(),e.getContent(),e.getWdate(),e.getCategory(),e.getDetail(),e.getSum(),e.getNote(),e.getStatus(), e.getRstatus(), e.getApproval1(),e.getApproval2(), e.getApproval1rank(), e.getApproval2rank(), e.getApp1username(), e.getApp2username()));
+        }
+        for(Expense e : listtt){
+            list2.add(new ExpenseDto(e.getExpenseNum(),e.getMember(),e.getTitle(),e.getContent(),e.getWdate(),e.getCategory(),e.getDetail(),e.getSum(),e.getNote(),e.getStatus(), e.getRstatus(), e.getApproval1(),e.getApproval2(), e.getApproval1rank(), e.getApproval2rank(), e.getApp1username(), e.getApp2username()));
+        }
+        return list2;
+    }
+    
+    public ArrayList<ExpenseDto> getMyRefuse(){
+    	
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+        ArrayList<Expense> list = (ArrayList<Expense>) dao.findByMemberUsernameAndRstatusOrderByExpenseNumDesc(mdto.getUsername(), -1);
         ArrayList<ExpenseDto> list2 = new ArrayList<>();
         for(Expense e : list){
             list2.add(new ExpenseDto(e.getExpenseNum(),e.getMember(),e.getTitle(),e.getContent(),e.getWdate(),e.getCategory(),e.getDetail(),e.getSum(),e.getNote(),e.getStatus(), e.getRstatus(), e.getApproval1(),e.getApproval2(), e.getApproval1rank(), e.getApproval2rank(), e.getApp1username(), e.getApp2username()));
