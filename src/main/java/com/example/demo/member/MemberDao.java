@@ -26,5 +26,6 @@ public interface MemberDao extends JpaRepository<Member, Long> {
 
     // 특정 사용자 제외 조회(채팅 초대)
     ArrayList<Member> findByIdNot(Long id, Sort sort);
-	
+
+    void deleteByUsername(String username);
 }

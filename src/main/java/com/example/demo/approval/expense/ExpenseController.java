@@ -41,7 +41,6 @@ public class ExpenseController {
     //지출결의서
 	@GetMapping("/expense")
 	public Map report() {
-
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
@@ -52,7 +51,6 @@ public class ExpenseController {
 
 	@PostMapping("/expense")
 	public Map addReport(ExpenseDto dto) {
-
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);

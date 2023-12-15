@@ -20,6 +20,8 @@ import com.example.demo.member.MemberDto;
 public class BoardService {
 	@Autowired
 	private BoardDao dao;
+    @Autowired
+    private NotifyDao ndao;
 	
     // pk로 검색. dao.findById()
     public BoardDto getBoard(int num) {
@@ -91,6 +93,16 @@ public class BoardService {
     public Page<Board> getBoardList(int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "num"));
         return this.dao.findAll(pageable);
+    }
+
+    // 공지사항 전체검색. ndao.findAll()
+    public ArrayList<NotifyDto> getAllnotify() {
+        List<Notify> list = ndao.findAll(Sort.by(Sort.Direction.DESC, "num"));
+        ArrayList<NotifyDto> list2 = new ArrayList<>();
+        for (Notify b : list) {
+            list2.add(new NotifyDto(b.getNum(), b.getWdate(), b.getUdate(), b.getMember(), b.getTitle(), b.getContent(), b.getCnt()));
+        }
+        return list2;
     }
 }
 
