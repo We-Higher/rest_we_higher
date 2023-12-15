@@ -1,6 +1,6 @@
 package com.example.demo.approval.vacation;
 
-import com.example.demo.approval.report.ReportDto;
+import com.example.demo.approval.vacation.VacationDto;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -30,20 +31,14 @@ import java.util.Map;
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth/approval")
 public class VacationController {
+	
     @Autowired
     private VacationService vservice;
     @Autowired
     private MemberService mservice;
-
-    //자바에서 script 사용하기
-    public static void init(HttpServletResponse response) {
-        response.setContentType("text/html; charset=utf-8");
-        response.setCharacterEncoding("utf-8");
-    }
     
-	// 휴가신청서
 	@GetMapping("/vacation")
-	public Map report() {
+	public Map Vacation() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
@@ -53,7 +48,6 @@ public class VacationController {
 		return map;
 	}
 	
-	// 휴가신청서 기안
 	@PostMapping("/vacation")
 	public Map addVacation(VacationDto dto) {
 
@@ -70,4 +64,78 @@ public class VacationController {
 		map.put("dto", dto);
 		return map;
 	}
+	
+	@RequestMapping("/vacation/editread/{num}")
+	public Map get(@PathVariable("num") int num) {
+
+		Map map = new HashMap();
+		VacationDto vdto = vservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		map.put("dto", vdto);
+		return map;
+	}
+	
+	@RequestMapping("/vacation/edit/{num}")
+	public Map get2(@PathVariable("num") int num) {
+
+		Map map = new HashMap();
+		VacationDto vdto = vservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		map.put("dto", vdto);
+		return map;
+	}
+	
+    @PostMapping("/vacation/approve")
+    public Map VacationApproval(int num) {
+
+		Map map = new HashMap();
+		boolean flag = true;
+		VacationDto vdto = vservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+    	if(vdto.getRstatus()==0 && vdto.getStatus()==0 && vdto.getApp1username().equals(mdto.getUsername())){
+    		vservice.approveVacation(vdto, mdto);
+    	}
+    	else if(vdto.getRstatus()==0 && vdto.getStatus()==1 && vdto.getApp2username().equals(mdto.getUsername())){
+    		vservice.approveVacation(vdto, mdto);
+    	}
+    	else {
+    		
+    		flag = false;
+    		System.out.println("결재할 수 없습니다.");
+    	}
+    	map.put("flag", flag);
+        return map;
+    }
+    
+    @PostMapping("/vacation/refuse")
+    public Map VacationRefuse(int num){
+    	
+		Map map = new HashMap();
+		boolean flag = true;
+		VacationDto vdto = vservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+    	if(vdto.getRstatus()==0 && vdto.getStatus()==0 && vdto.getApp1username().equals(mdto.getUsername())){
+    		vservice.refuseVacation(vdto, mdto);
+    	}
+    	else if(vdto.getRstatus()==0 && vdto.getStatus()==1 && vdto.getApp2username().equals(mdto.getUsername())){
+    		vservice.refuseVacation(vdto, mdto);
+    	}
+    	else {
+    		
+    		flag = false;
+    		System.out.println("결재할 수 없습니다.");
+    	}
+    	map.put("flag", flag);
+        return map;
+    }
 }

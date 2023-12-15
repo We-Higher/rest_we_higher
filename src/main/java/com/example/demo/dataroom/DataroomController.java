@@ -3,7 +3,6 @@ package com.example.demo.dataroom;
 import com.example.demo.auth.SecurityMember;
 import com.example.demo.board.BoardDto;
 import com.example.demo.board.BoardService;
-import com.example.demo.diary.DiaryDto;
 import com.example.demo.employee.EmployeeService;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;

@@ -70,7 +70,7 @@ public class ReportController {
 		return map;
 	}
 	
-	@GetMapping("/report/editread/{num}")
+	@RequestMapping("/report/editread/{num}")
 	public Map get(@PathVariable("num") int num) {
 
 		Map map = new HashMap();
@@ -78,9 +78,69 @@ public class ReportController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
-		map.put("mdto,", mdto);
+		map.put("mdto", mdto);
 		map.put("dto", rdto);
-		System.out.println("성공");
 		return map;
 	}
+	
+	@RequestMapping("/report/edit/{num}")
+	public Map get2(@PathVariable("num") int num) {
+
+		Map map = new HashMap();
+		ReportDto rdto = rservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		map.put("dto", rdto);
+		return map;
+	}
+	
+    @PostMapping("/report/approve")
+    public Map ReportApproval(int num) {
+
+		Map map = new HashMap();
+		boolean flag = true;
+		ReportDto rdto = rservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+    	if(rdto.getRstatus()==0 && rdto.getStatus()==0 && rdto.getApp1username().equals(mdto.getUsername())){
+    		rservice.approveReport(rdto, mdto);
+    	}
+    	else if(rdto.getRstatus()==0 && rdto.getStatus()==1 && rdto.getApp2username().equals(mdto.getUsername())){
+    		rservice.approveReport(rdto, mdto);
+    	}
+    	else {
+    		
+    		flag = false;
+    		System.out.println("결재할 수 없습니다.");
+    	}
+    	map.put("flag", flag);
+        return map;
+    }
+    
+    @PostMapping("/report/refuse")
+    public Map ReportRefuse(int num){
+    	
+		Map map = new HashMap();
+		boolean flag = true;
+		ReportDto rdto = rservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+    	if(rdto.getRstatus()==0 && rdto.getStatus()==0 && rdto.getApp1username().equals(mdto.getUsername())){
+    		rservice.refuseReport(rdto, mdto);
+    	}
+    	else if(rdto.getRstatus()==0 && rdto.getStatus()==1 && rdto.getApp2username().equals(mdto.getUsername())){
+    		rservice.refuseReport(rdto, mdto);
+    	}
+    	else {
+    		
+    		flag = false;
+    		System.out.println("결재할 수 없습니다.");
+    	}
+    	map.put("flag", flag);
+        return map;
+    }
 }
