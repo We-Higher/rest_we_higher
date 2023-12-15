@@ -98,7 +98,7 @@ public class ReportService {
         return new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username());
     }
     
-    public ReportDto approveReport(HttpServletResponse response, ReportDto dto, MemberDto mdto) throws IOException {
+    public ReportDto approveReport(ReportDto dto, MemberDto mdto){
     	
     	if(dto.getRstatus()==0 && dto.getStatus()==0 && dto.getApp1username().equals(mdto.getUsername())){
     		dto.setStatus(1);
@@ -108,16 +108,14 @@ public class ReportService {
     	}
     	else {
     		
-            PrintWriter out = response.getWriter();
-            out.write("<script>alert('"+"결재할 수 없습니다."+"');location.href='"+"/approval/process"+"';</script>");
-            out.flush();
+    		System.out.println("결재할 수 없습니다.");
     	}
     	
     	Report r = dao.save(new Report(dto.getReportNum(), dto.getMember(), dto.getTitle(), dto.getContent(), dto.getWdate(), dto.getServiceLife(), dto.getClassification(), dto.getStatus(), dto.getRstatus(), dto.getApproval1(), dto.getApproval2(), dto.getApproval1rank(), dto.getApproval2rank(), dto.getApp1username(), dto.getApp2username()));
     	return new ReportDto(r.getReportNum(), r.getMember(), r.getTitle(), r.getContent(), r.getWdate(), r.getServiceLife(), r.getClassification(), r.getStatus(), r.getRstatus(), r.getApproval1(),r.getApproval2(), r.getApproval1rank(), r.getApproval2rank(), r.getApp1username(), r.getApp2username());
     }
     
-    public ReportDto refuseReport(HttpServletResponse response, ReportDto dto, MemberDto mdto) throws IOException {
+    public ReportDto refuseReport(ReportDto dto, MemberDto mdto){
     	
     	if(dto.getRstatus()==0 && dto.getStatus()==0 && dto.getApp1username().equals(mdto.getUsername())){
     		dto.setRstatus(-1);
@@ -127,9 +125,7 @@ public class ReportService {
     	}
     	else {
     		
-            PrintWriter out = response.getWriter();
-            out.write("<script>alert('"+"반려할 수 없습니다."+"');location.href='"+"/approval/process"+"';</script>");
-            out.flush();
+    		System.out.println("반려할 수 없습니다.");
     	}
     	
     	Report r = dao.save(new Report(dto.getReportNum(), dto.getMember(), dto.getTitle(), dto.getContent(), dto.getWdate(), dto.getServiceLife(), dto.getClassification(), dto.getStatus(), dto.getRstatus(), dto.getApproval1(), dto.getApproval2(), dto.getApproval1rank(), dto.getApproval2rank(), dto.getApp1username(), dto.getApp2username()));

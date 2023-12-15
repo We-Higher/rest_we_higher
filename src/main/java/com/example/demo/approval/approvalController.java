@@ -192,7 +192,7 @@ public class approvalController {
     }*/
 
     //품의서 결재
-    @PostMapping("/report/approve")
+    /*@PostMapping("/report/approve")
     public String ReportApproval(HttpServletResponse response, int reportNum, Principal principal) throws IOException {
 
         init(response);
@@ -201,10 +201,10 @@ public class approvalController {
         rservice.approveReport(response, rdto, mdto);
 
         return "redirect:/approval/process";
-    }
+    }*/
 
     //지출결의서 결재
-    @PostMapping("/expense/approve")
+    /*@PostMapping("/expense/approve")
     public String ExpenseApproval(HttpServletResponse response, int expenseNum, Principal principal) throws IOException {
 
         init(response);
@@ -225,10 +225,10 @@ public class approvalController {
         vservice.approveVacation(response, vdto, mdto);
 
         return "redirect:/approval/process";
-    }
+    }*/
 
     //품의서 반려
-    @GetMapping("/report/refuse")
+    /*@GetMapping("/report/refuse")
     public String ReportRefuse(HttpServletResponse response, int reportNum, Principal principal) throws IOException {
 
         init(response);
@@ -237,10 +237,10 @@ public class approvalController {
         rservice.refuseReport(response, rdto, mdto);
 
         return "redirect:/approval/process";
-    }
+    }*/
 
     //지출결의서 반려
-    @GetMapping("/expense/refuse")
+    /*@GetMapping("/expense/refuse")
     public String ExpenseRefuse(HttpServletResponse response, int expenseNum, Principal principal) throws IOException {
 
         init(response);
@@ -261,5 +261,5 @@ public class approvalController {
         vservice.refuseVacation(response, vdto, mdto);
 
         return "redirect:/approval/process";
-    }
+    }*/
 }
