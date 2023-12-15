@@ -18,12 +18,14 @@ public class ChatController {
     @MessageMapping("/chat/message")
     public void message(ChatMessageDto chatMessageDto) {
         System.out.println("chatMessageDto = " + chatMessageDto);
-        messagingTemplate.convertAndSend("/sub/chat/room/"+chatMessageDto.getRoomId(), chatMessageDto);
+//        messagingTemplate.convertAndSend("/sub/chat/room/"+chatMessageDto.getRoomId(), chatMessageDto);
     }
 
     @PostMapping("/chat/message/add")
     @ResponseBody
-    public ChatMessage addMessage(ChatMessage chatMessage, ModelMap map) {
-        return chatMessageService.create(chatMessage);
+    public ChatMessage addMessage(ChatMessage chatMessage) {
+        ChatMessage cm = chatMessageService.create(chatMessage);
+        messagingTemplate.convertAndSend("/sub/chat/room/"+cm.getRoom().getId(), cm);
+        return cm;
     }
 }
