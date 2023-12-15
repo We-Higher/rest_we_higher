@@ -176,7 +176,7 @@ public class MeetingroomController {
     //방 아이디
     @GetMapping("/{roomId}")
     @ResponseBody
-    public ArrayList<Map<String, Object>> findbyroomId(ModelMap map, @PathVariable("roomId") int roomId) {
+    public ArrayList<Map<String, Object>> findbyroomId( @PathVariable("roomId") int roomId) {
 
         ArrayList<MeetingroomDto> listAll=null;
         if(roomId == 0){
@@ -187,6 +187,7 @@ public class MeetingroomController {
 
         ArrayList<Map<String, Object>> result = new ArrayList<>();
         for (MeetingroomDto meetingroom : listAll) {
+            Map<String, Object> map = new HashMap<>();
             map.put("cal_Id", meetingroom.getId());
             map.put("title", meetingroom.getRoomId()+"회의실-"+meetingroom.getTitle());
             map.put("start", meetingroom.getStartDate());
@@ -194,6 +195,7 @@ public class MeetingroomController {
             map.put("roomId", meetingroom.getRoomId());
             result.add(map);
         }
+        System.out.println("result = " + result);
         return result;
     }
 }
