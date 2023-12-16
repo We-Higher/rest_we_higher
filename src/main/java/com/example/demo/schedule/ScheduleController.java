@@ -43,11 +43,16 @@ public class ScheduleController {
             map.put("start", schedule.getStartDate());
             map.put("end", schedule.getEndDate());
             map.put("check", schedule.getCnt());
+            map.put("isMaster", mdto.getIsMaster());
+
+            // cnt 값에 따라 다른 색상 할당
+            String color = (schedule.getCnt() == 1) ? "#fbcdcf" : "#B5C1DB";
+            map.put("color", color);
+
             result.add(map);
         }
         return result;
     }
-
 
     // 일정추가
     @PostMapping("")
@@ -80,16 +85,17 @@ public class ScheduleController {
             dto.setCnt(1);
         }
         ScheduleDto s = service.save(dto);
-      
+
         Map map = new HashMap();
 
-        Map<String, Object> newEvnet = new HashMap<>();
-        newEvnet.put("cal_Id", s.getId());
-        newEvnet.put("title", s.getTitle());
-        newEvnet.put("start", s.getStartDate());
-        newEvnet.put("end", s.getEndDate());
-        newEvnet.put("check", s.getCnt());
-        map.put("newEvent", newEvnet);
+        Map<String, Object> newEvent = new HashMap<>();
+        newEvent.put("cal_Id", s.getId());
+        newEvent.put("title", s.getTitle());
+        newEvent.put("start", s.getStartDate());
+        newEvent.put("end", s.getEndDate());
+        newEvent.put("check", s.getCnt());
+        newEvent.put("isMaster", mdto.getIsMaster()); // isMaster를 응답에 포함
+        map.put("newEvent", newEvent);
 
         return map;
     }
