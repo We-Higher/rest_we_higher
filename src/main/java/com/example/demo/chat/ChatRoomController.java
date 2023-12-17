@@ -60,8 +60,7 @@ public class ChatRoomController {
 
     // 채팅방 생성
     @PostMapping("/room")
-    @ResponseBody
-    public ChatRoomDto createRoom(@RequestBody ChatRoomDto request) {
+    public Map createRoom(@RequestBody ChatRoomDto request) {
         System.out.println("participants = " + request.getParticipants());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
@@ -75,7 +74,12 @@ public class ChatRoomController {
                 .participants(request.getParticipants())
                 .build();
 
-        return chatRoomService.create(chatRoomDto);
+        ChatRoomDto room = chatRoomService.create(chatRoomDto);
+
+        Map map = new HashMap();
+        map.put("room", room);
+
+        return map;
     }
 
 
