@@ -112,18 +112,19 @@ public class ChatRoomController {
 
     // 채팅방 나가기
     @PostMapping("/room/out/{roomId}")
-    @ResponseBody
-    public boolean roomOut(@PathVariable int roomId) {
+    public Map roomOut(@PathVariable int roomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginMember = (Member) authentication.getPrincipal();
+        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        MemberDto mdto = memberService.getMember(loginMember.getUsername());
         boolean flag = true;
 
         ChatRoomDto chatRoomDto = chatRoomService.getById(roomId);
-        chatRoomDto.getParticipants().removeIf(member -> member.getId().equals(loginMember.getId()));
+        chatRoomDto.getParticipants().removeIf(member -> member.getId().equals(mdto.getId()));
 
-        chatRoomService.edit(chatRoomDto);
+        Map map = new HashMap();
+        map.put("room", chatRoomService.edit(chatRoomDto));
 
-        return flag;
+        return map;
     }
 
     // 채팅방 초대
