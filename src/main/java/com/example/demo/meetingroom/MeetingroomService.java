@@ -3,6 +3,7 @@ package com.example.demo.meetingroom;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,8 +14,31 @@ public class MeetingroomService {
 
     //추가,수정
     public MeetingroomDto save(MeetingroomDto dto) {
+        if (isOverlap(dto)) {
+            throw new RuntimeException("이미 예약된 시간대입니다.");
+        }
+
         Meetingroom entity = dao.save(new Meetingroom(dto.getId(),dto.getMember(), dto.getTitle(), dto.getStartDate(), dto.getEndDate(), dto.getRoomId()));
         return new MeetingroomDto(entity.getId(),entity.getMember(), entity.getTitle(), entity.getStartDate(), entity.getEndDate(),entity.getRoomId());
+    }
+
+    // 중복 체크
+    private boolean isOverlap(MeetingroomDto dto) {
+        int roomId = dto.getRoomId();
+        LocalDateTime startDate = dto.getStartDate();
+        LocalDateTime endDate = dto.getEndDate();
+
+        List<Meetingroom> overlappingEvents = dao.findByRoomIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                roomId, endDate, startDate);
+
+        return !overlappingEvents.isEmpty();
+    }
+    //중복 체크를 위한 메서드
+    public boolean isOverlap(int roomId, LocalDateTime startDate, LocalDateTime endDate) {
+        List<Meetingroom> overlappingEvents = dao.findByRoomIdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                roomId, endDate, startDate);
+
+        return !overlappingEvents.isEmpty();
     }
 
     //아이디로 찾기
