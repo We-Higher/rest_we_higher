@@ -122,7 +122,11 @@ public class BoardService {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "num"));
         return this.dao.findAll(pageable);
     }
-    
+    public Page<Notify> getNotifyList(int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "num"));
+        return this.ndao.findAll(pageable);
+    }
+
     // 공지사항 pk로 검색
     public NotifyDto getNotify(int num) {
     	Notify b = ndao.findById(num).orElse(null);

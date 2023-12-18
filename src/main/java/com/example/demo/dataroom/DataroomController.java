@@ -63,17 +63,26 @@ public class DataroomController {
 
     @Value("${spring.servlet.multipart.location}")
     private String path;
-    
-    // 데이터룸 목록
+
+	// 데이터룸 목록
 	@GetMapping("")
-	public Map emplist() {
-		ArrayList<DataroomDto> list = dservice.getAll();
+	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
+
 		Map map = new HashMap();
+		Page<Dataroom> paging = this.dservice.getList(page - 1);
+
 		map.put("mdto", mdto);
-		map.put("list", list);
+		map.put("currentPage", page);  // 현재 페이지 번호
+		map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
+		map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
+		map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
+		map.put("list", paging.getContent());  // 현재 페이지의 내용
+		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = LocalDateTime.now().format(formatter1);
+		map.put("date", date);
 		return map;
 	}
 	
