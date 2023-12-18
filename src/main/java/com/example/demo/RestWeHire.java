@@ -27,7 +27,7 @@ public class RestWeHire {
                         .email("admin@email.com")
                         .phone("010-1234-5678")
                         .address("서울")
-                        .companyName("Co-Operate-Works")
+                        .companyName("We-Hire")
                         .deptCode(1)
                         .companyRank(9)
                         .newNo("115284")

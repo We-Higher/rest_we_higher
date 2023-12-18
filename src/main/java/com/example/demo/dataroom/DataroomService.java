@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import com.example.demo.board.Board;
+
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -49,6 +51,20 @@ public class DataroomService {
         for (Dataroom d : l) {
             list.add(new DataroomDto(d.getNum(), d.getMember(), d.getWdate(), d.getTitle(), d.getContent(),
                     d.getFname(), d.getCnt(), null));
+        }
+        return list;
+    }
+    
+    // 옵션으로 검색
+    public List<Dataroom> getByOption2(String type, String option) {
+       
+        List<Dataroom> list = new ArrayList<Dataroom>();
+        if (Objects.equals("name", type)) {
+            list = dao.findByMemberNameLikeOrderByNumDesc("%" + option + "%");
+        } else if (Objects.equals("title", type)) {
+            list = dao.findByTitleLikeOrderByNumDesc("%" + option + "%");
+        } else {
+            list = dao.findAll(Sort.by(Sort.Direction.DESC, "num"));
         }
         return list;
     }

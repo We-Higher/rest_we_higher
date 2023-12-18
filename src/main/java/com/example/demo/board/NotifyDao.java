@@ -1,5 +1,7 @@
 package com.example.demo.board;
 
+import java.util.ArrayList;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -18,5 +20,8 @@ public interface NotifyDao extends JpaRepository<Notify, Integer> {
     void updateCnt(@Param("num") int num);
 	Page<Notify> findByMemberNameLike(String name, Pageable pageable);  //이름으로 검색
     Page<Notify> findByTitleLike(String name, Pageable pageable);  //제목으로 검색
+    
+    ArrayList<Notify> findByMemberNameLikeOrderByNumDesc(String name);  //이름으로 검색
+    ArrayList<Notify> findByTitleLikeOrderByNumDesc(String title);  //사번으로 검색
 }
 

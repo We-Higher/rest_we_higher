@@ -1,6 +1,7 @@
 package com.example.demo.dataroom;
 
 import com.example.demo.auth.SecurityMember;
+import com.example.demo.board.Board;
 import com.example.demo.board.BoardDto;
 import com.example.demo.board.BoardService;
 import com.example.demo.employee.EmployeeService;
@@ -46,6 +47,7 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -75,7 +77,28 @@ public class DataroomController {
 		return map;
 	}
 	
-	
+    // 옵션으로 검색
+    @GetMapping("/search")
+    public Map getbyOption(String type, String option) {
+		Map map = new HashMap();
+        System.out.println(type);
+        System.out.println(option);
+        List<Dataroom> list = dservice.getByOption2(type, option);
+		map.put("list", list);
+		return map;
+    }
+    
+	// 데이터룸 작성 폼
+	@GetMapping("/add")
+	public Map DataAdd() {
+		Map map = new HashMap();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		return map;
+	}
+
 	//데이터룸 등록
 	@PostMapping("")
 	public Map dataAdd(DataroomDto dto) {

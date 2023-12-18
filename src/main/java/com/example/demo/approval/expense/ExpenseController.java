@@ -12,6 +12,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,7 +41,7 @@ public class ExpenseController {
 
     //지출결의서
 	@GetMapping("/expense")
-	public Map report() {
+	public Map Expense() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
@@ -50,7 +51,7 @@ public class ExpenseController {
 	}
 
 	@PostMapping("/expense")
-	public Map addReport(ExpenseDto dto) {
+	public Map addExpense(ExpenseDto dto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
@@ -64,4 +65,76 @@ public class ExpenseController {
 		map.put("dto", dto);
 		return map;
 	}
+	
+	@RequestMapping("/expense/editread/{num}")
+	public Map get(@PathVariable("num") int num) {
+
+		Map map = new HashMap();
+		ExpenseDto edto = eservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		map.put("dto", edto);
+		return map;
+	}
+	
+	@RequestMapping("/expense/edit/{num}")
+	public Map get2(@PathVariable("num") int num) {
+
+		Map map = new HashMap();
+		ExpenseDto edto = eservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		map.put("dto", edto);
+		return map;
+	}
+	
+    @PostMapping("/expense/approve")
+    public Map ExpenseApproval(int num) {
+
+		Map map = new HashMap();
+		boolean flag = true;
+		ExpenseDto edto = eservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+    	if(edto.getRstatus()==0 && edto.getStatus()==0 && edto.getApp1username().equals(mdto.getUsername())){
+    		eservice.approveExpense(edto, mdto);
+    	}
+    	else if(edto.getRstatus()==0 && edto.getStatus()==1 && edto.getApp2username().equals(mdto.getUsername())){
+    		eservice.approveExpense(edto, mdto);
+    	}
+    	else {
+    		flag = false;
+    		System.out.println("결재할 수 없습니다.");
+    	}
+    	map.put("flag", flag);
+        return map;
+    }
+    
+    @PostMapping("/expense/refuse")
+    public Map ExpenseRefuse(int num){
+    	
+		Map map = new HashMap();
+		boolean flag = true;
+		ExpenseDto edto = eservice.getById(num);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+    	if(edto.getRstatus()==0 && edto.getStatus()==0 && edto.getApp1username().equals(mdto.getUsername())){
+    		eservice.refuseExpense(edto, mdto);
+    	}
+    	else if(edto.getRstatus()==0 && edto.getStatus()==1 && edto.getApp2username().equals(mdto.getUsername())){
+    		eservice.refuseExpense(edto, mdto);
+    	}
+    	else {
+    		flag = false;
+    		System.out.println("결재할 수 없습니다.");
+    	}
+    	map.put("flag", flag);
+        return map;
+    }
 }

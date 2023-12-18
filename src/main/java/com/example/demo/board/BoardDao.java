@@ -22,7 +22,10 @@ public interface BoardDao extends JpaRepository<Board, Integer> {
     void updateCnt(@Param("num") int num);
 
     Page<Board> findByMemberNameLike(String name, Pageable pageable);  //이름으로 검색
-
     Page<Board> findByTitleLike(String title, Pageable pageable);  //제목으로 검색
+    
+    ArrayList<Board> findByMemberNameLikeOrderByNumDesc(String name);  //이름으로 검색
+    ArrayList<Board> findByTitleLikeOrderByNumDesc(String title);  //사번으로 검색
+    
 }
 
