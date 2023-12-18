@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -36,6 +37,17 @@ public class BoardController {
 		map.put("list", list);
 		return map;
 	}
+	
+	// 글작성 폼
+	@GetMapping("/add")
+	public Map BoardAdd() {
+		Map map = new HashMap();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+		map.put("mdto", mdto);
+		return map;
+	}
 		
 	// 글작성
 	@PostMapping("")
@@ -51,7 +63,18 @@ public class BoardController {
 		map.put("dto", d);
 		return map;
 	}
-
+	
+    // 옵션으로 검색
+    @GetMapping("/search")
+    public Map getbyOption(String type, String option) {
+		Map map = new HashMap();
+        System.out.println(type);
+        System.out.println(option);
+        List<Board> list = bservice.getByOption2(type, option);
+		map.put("list", list);
+		return map;
+    }
+    
 	// 글 상세페이지
 	@RequestMapping("/{num}")
 	public Map get(@PathVariable("num") int num) {
@@ -61,6 +84,7 @@ public class BoardController {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto m = mservice.getMember(id);
+		bservice.editCnt(num);
 		map.put("m,", m);
 		map.put("dto", b);
 		return map;
@@ -100,6 +124,7 @@ public class BoardController {
 		map.put("list", list);
 		return map;
 	}
+	
 	
     /*@GetMapping("")
     public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {

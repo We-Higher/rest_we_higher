@@ -1,5 +1,7 @@
 package com.example.demo.dataroom;
 
+import java.util.ArrayList;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -16,4 +18,9 @@ public interface DataroomDao extends JpaRepository<Dataroom,Integer> {
     Page<Dataroom> findByMemberNameContains(String writer, Pageable pageable);
     Page<Dataroom> findByTitleContains(String title, Pageable pageable);
     Page<Dataroom> findAll(Pageable pageable); //페이징
+    
+    ArrayList<Dataroom> findByMemberNameLikeOrderByNumDesc(String name); //페이징
+    ArrayList<Dataroom> findByTitleLikeOrderByNumDesc(String title); //페이징
+    
+    
 }
