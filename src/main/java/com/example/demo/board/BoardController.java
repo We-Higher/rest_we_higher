@@ -97,7 +97,7 @@ public class BoardController {
 		String id = authentication.getName();
 		MemberDto m = mservice.getMember(id);
 		bservice.editCnt(num);
-		map.put("m,", m);
+		map.put("mdto,", m);
 		map.put("dto", b);
 		return map;
 	}
