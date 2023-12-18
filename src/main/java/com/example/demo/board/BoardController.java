@@ -5,10 +5,13 @@ import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -27,14 +30,23 @@ public class BoardController {
 	
 	// 글목록
 	@GetMapping("")
-	public Map list() {
-		ArrayList<BoardDto> list = bservice.getAll();
-		Map map = new HashMap();
+	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String id = authentication.getName();
 		MemberDto mdto = mservice.getMember(id);
+
+		Page<Board> paging = this.bservice.getBoardList(page - 1);
+		Map map = new HashMap();
+
 		map.put("mdto", mdto);
-		map.put("list", list);
+		map.put("currentPage", page);  // 현재 페이지 번호
+		map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
+		map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
+		map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
+		map.put("list", paging.getContent());  // 현재 페이지의 내용
+		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = LocalDateTime.now().format(formatter1);
+		map.put("date", date);
 		return map;
 	}
 	

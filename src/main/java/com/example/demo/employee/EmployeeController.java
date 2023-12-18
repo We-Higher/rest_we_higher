@@ -38,17 +38,23 @@ public class EmployeeController {
     private MemberService mservice;
     
     // 임직원 목록
-	@GetMapping("/list")
-	public Map emplist() {
-		ArrayList<MemberDto> list = mservice.getAll();
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
-		Map map = new HashMap();
-		map.put("mdto", mdto);
-		map.put("list", list);
-		return map;
-	}
+	@GetMapping("")
+	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        MemberDto mdto = mservice.getMember(id);
+
+        Map map = new HashMap();
+        Page<Member> paging = this.mservice.getList(page - 1);
+
+        map.put("mdto", mdto);
+        map.put("currentPage", page);  // 현재 페이지 번호
+        map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
+        map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
+        map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
+        map.put("list", paging.getContent());  // 현재 페이지의 내용
+        return map;
+    }
 	
     // 옵션으로 검색
     @GetMapping("/search")

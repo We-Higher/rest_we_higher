@@ -41,6 +41,28 @@ public class NotifyController {
 		map.put("list", list);
 		return map;
 	}
+
+	//공지사항 목록
+	@GetMapping("")
+	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = mservice.getMember(id);
+
+		Page<Notify> paging = this.bservice.getNotifyList(page - 1);
+		Map map = new HashMap();
+
+		map.put("mdto", mdto);
+		map.put("currentPage", page);  // 현재 페이지 번호
+		map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
+		map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
+		map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
+		map.put("list", paging.getContent());  // 현재 페이지의 내용
+		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+		String date = LocalDateTime.now().format(formatter1);
+		map.put("date", date);
+		return map;
+	}
 	
     // 옵션으로 검색
     @GetMapping("/search")
