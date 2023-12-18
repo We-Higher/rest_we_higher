@@ -132,12 +132,11 @@ public class MemberService {
     // 채팅방 미참여자 목록
     public List<MemberDto> getNonParticipantsMembers(int roomId) {
         ChatRoom chatRoom = chatRoomDao.findById(roomId).orElseThrow(() -> new IllegalArgumentException("Invalid roomId: " + roomId));
-        Set<MemberDto> participants = chatRoom.getParticipants().stream().map(MemberDto::of).collect(Collectors.toSet());;
-
-        List<MemberDto> allMembers = dao.findAll().stream().map(MemberDto::of).collect(Collectors.toList());
+        Set<Member> participants = chatRoom.getParticipants();
+        List<Member> allMembers = dao.findAll();
         allMembers.removeAll(participants);
 
-        return allMembers;
+        return allMembers.stream().map(MemberDto::of).collect(Collectors.toList());
     }
     public MemberDto getMemberByName(String name) {
         Member m = dao.findByName(name);

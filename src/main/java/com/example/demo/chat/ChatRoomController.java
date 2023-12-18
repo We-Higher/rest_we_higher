@@ -129,27 +129,18 @@ public class ChatRoomController {
 
     // 채팅방 초대
     @PostMapping("/room/invite/{roomId}")
-    @ResponseBody
-    public boolean roomOut(@PathVariable int roomId, @RequestParam("invitation") Set<MemberDto> invitation) {
-        boolean flag = true;
+    public Map roomOut(@PathVariable int roomId, @RequestBody Set<MemberDto> invitation) {
         System.out.println("invitation = " + invitation);
         ChatRoomDto chatRoomDto = chatRoomService.getById(roomId);
-
-//        System.out.println("chatRoomDto = " + chatRoomDto.getParticipants());
-
 
         Set<MemberDto> s = new HashSet<>();
         s.addAll(chatRoomDto.getParticipants());
         s.addAll(invitation);
         chatRoomDto.setParticipants(s);
 
-//        System.out.println("roomId = " + roomId);
-//        System.out.println("s = " + s);
-//        System.out.println("chatRoomDto = " + chatRoomDto.getParticipants());
+        Map map = new HashMap();
+        map.put("room", chatRoomService.edit(chatRoomDto));
 
-
-        chatRoomService.edit(chatRoomDto);
-
-        return flag;
+        return map;
     }
 }
