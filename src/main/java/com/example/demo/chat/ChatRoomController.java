@@ -112,43 +112,35 @@ public class ChatRoomController {
 
     // 채팅방 나가기
     @PostMapping("/room/out/{roomId}")
-    @ResponseBody
-    public boolean roomOut(@PathVariable int roomId) {
+    public Map roomOut(@PathVariable int roomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        Member loginMember = (Member) authentication.getPrincipal();
+        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        MemberDto mdto = memberService.getMember(loginMember.getUsername());
         boolean flag = true;
 
         ChatRoomDto chatRoomDto = chatRoomService.getById(roomId);
-        chatRoomDto.getParticipants().removeIf(member -> member.getId().equals(loginMember.getId()));
+        chatRoomDto.getParticipants().removeIf(member -> member.getId().equals(mdto.getId()));
 
-        chatRoomService.edit(chatRoomDto);
+        Map map = new HashMap();
+        map.put("room", chatRoomService.edit(chatRoomDto));
 
-        return flag;
+        return map;
     }
 
     // 채팅방 초대
     @PostMapping("/room/invite/{roomId}")
-    @ResponseBody
-    public boolean roomOut(@PathVariable int roomId, @RequestParam("invitation") Set<MemberDto> invitation) {
-        boolean flag = true;
+    public Map roomOut(@PathVariable int roomId, @RequestBody Set<MemberDto> invitation) {
         System.out.println("invitation = " + invitation);
         ChatRoomDto chatRoomDto = chatRoomService.getById(roomId);
-
-//        System.out.println("chatRoomDto = " + chatRoomDto.getParticipants());
-
 
         Set<MemberDto> s = new HashSet<>();
         s.addAll(chatRoomDto.getParticipants());
         s.addAll(invitation);
         chatRoomDto.setParticipants(s);
 
-//        System.out.println("roomId = " + roomId);
-//        System.out.println("s = " + s);
-//        System.out.println("chatRoomDto = " + chatRoomDto.getParticipants());
+        Map map = new HashMap();
+        map.put("room", chatRoomService.edit(chatRoomDto));
 
-
-        chatRoomService.edit(chatRoomDto);
-
-        return flag;
+        return map;
     }
 }
