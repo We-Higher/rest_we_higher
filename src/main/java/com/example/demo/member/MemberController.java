@@ -36,6 +36,7 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RequiredArgsConstructor
@@ -218,4 +219,38 @@ public class MemberController {
 		return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
 	}
 
+	@GetMapping("/monthMemberList")
+	public Map emplist() {
+		ArrayList<MemberDto> list = service.getAll();
+		ArrayList<MemberDto> list2 = new ArrayList<>();
+		for (MemberDto dto : list) {
+			if (dto.getMonthMember() == 1) {
+				list2.add(dto);
+			}
+		}
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto mdto = service.getMember(id);
+		Map map = new HashMap();
+		map.put("mdto", mdto);
+		map.put("list", list2);
+		return map;
+	}
+
+	@PutMapping("/monthMember")
+	public Map monthMember(@RequestBody Map<String, List<Long>> requestBody) {
+		List<Long> selectedMemberIds = requestBody.get("selectedMembers");
+		Map map = new HashMap();
+		ArrayList<MemberDto> list = service.getAll();
+		map.put("list", list);
+		for (MemberDto dto : list) {
+			if (selectedMemberIds != null && selectedMemberIds.contains(dto.getId())) {
+				dto.setMonthMember(1);
+			} else {
+				dto.setMonthMember(0);
+			}
+			service.save(dto);
+		}
+		return map;
+	}
 }
