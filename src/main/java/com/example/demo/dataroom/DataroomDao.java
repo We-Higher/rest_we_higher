@@ -2,6 +2,7 @@ package com.example.demo.dataroom;
 
 import java.util.ArrayList;
 
+import com.example.demo.board.Board;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,6 +22,8 @@ public interface DataroomDao extends JpaRepository<Dataroom,Integer> {
     
     ArrayList<Dataroom> findByMemberNameLikeOrderByNumDesc(String name); //페이징
     ArrayList<Dataroom> findByTitleLikeOrderByNumDesc(String title); //페이징
-    
-    
+
+
+    Page<Dataroom> findByMemberNameLike(String name, Pageable pageable);  //이름으로 검색
+    Page<Dataroom> findByTitleLike(String title, Pageable pageable);  //제목으로 검색
 }

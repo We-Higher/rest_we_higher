@@ -44,37 +44,23 @@ public class BoardService {
         }
         return list2;
     }
-    
-    // 옵션으로 검색
-    public List<Board> getByOption2(String type, String option) {
-       
-        List<Board> list = new ArrayList<Board>();
-        if (Objects.equals("name", type)) {
-            list = dao.findByMemberNameLikeOrderByNumDesc("%" + option + "%");
-        } else if (Objects.equals("title", type)) {
-            list = dao.findByTitleLikeOrderByNumDesc("%" + option + "%");
-        } else {
-            list = dao.findAll(Sort.by(Sort.Direction.DESC, "num"));
-        }
-        return list;
-    }
-    
+
     // 공지사항 옵션으로 검색
-    public List<Notify> getByOption3(String type, String option) {
-       
-        List<Notify> list = new ArrayList<Notify>();
+    public Page<NotifyDto> getByOption2(String type, String option, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "num"));
+        Page<Notify> list;
         if (Objects.equals("name", type)) {
-            list = ndao.findByMemberNameLikeOrderByNumDesc("%" + option + "%");
+            list = ndao.findByMemberNameLike("%" + option + "%", pageable);
         } else if (Objects.equals("title", type)) {
-            list = ndao.findByTitleLikeOrderByNumDesc("%" + option + "%");
+            list = ndao.findByTitleLike("%" + option + "%", pageable);
         } else {
-            list = ndao.findAll(Sort.by(Sort.Direction.DESC, "num"));
+            list = ndao.findAll(pageable);
         }
-        return list;
+        return list.map(NotifyDto::of);
     }
-    
+
     // 옵션으로 검색
-    /*public Page<BoardDto> getByOption(String type, String option, int page) {
+    public Page<BoardDto> getByOption(String type, String option, int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "num"));
         Page<Board> list;
         if (Objects.equals("name", type)) {
@@ -85,7 +71,7 @@ public class BoardService {
             list = dao.findAll(pageable);
         }
         return list.map(BoardDto::of);
-    }*/
+    }
     
     // 게시글 추가, 수정. dao.save()
     public BoardDto saveBoard(BoardDto b, int check) {
