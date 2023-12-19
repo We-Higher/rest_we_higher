@@ -37,8 +37,21 @@ public class EmployeeController {
     private EmployeeService service;
     @Autowired
     private MemberService mservice;
-    
-    // 임직원 목록
+
+
+
+    @GetMapping("/list")
+    public Map emplist() {
+        ArrayList<MemberDto> list = mservice.getAll();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String id = authentication.getName();
+        MemberDto mdto = mservice.getMember(id);
+        Map map = new HashMap();
+        map.put("mdto", mdto);
+        map.put("list", list);
+        return map;
+    }
+        // 임직원 목록
 	@GetMapping("")
 	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -56,17 +69,6 @@ public class EmployeeController {
         map.put("list", paging.getContent());  // 현재 페이지의 내용
         return map;
     }
-	
-    // 옵션으로 검색
-//    @GetMapping("/search")
-//    public Map getbyOption(String type, String option) {
-//		Map map = new HashMap();
-//        System.out.println(type);
-//        System.out.println(option);
-//        List<Member> list = service.getByOption2(type, option);
-//		map.put("list", list);
-//		return map;
-//    }
 
     // 옵션으로 검색
     @GetMapping("/search")
