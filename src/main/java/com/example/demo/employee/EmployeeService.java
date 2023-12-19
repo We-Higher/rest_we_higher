@@ -31,25 +31,25 @@ public class EmployeeService {
     }
     
     // 옵션으로 검색
-    public List<Member> getByOption2(String type, String option) {
-       
-        List<Member> list = new ArrayList<Member>();
-        if (Objects.equals("name", type)) {
-            list = mdao.findByNameLike("%" + option + "%");
-        } else if (Objects.equals("newNo", type)) {
-            list = mdao.findByNewNoLike("%" + option + "%");
-        } else if (Objects.equals("companyRankName", type)) {
-            list = mdao.findByCompanyRankNameLike("%" + option + "%");
-        } else if (Objects.equals("deptName", type)) {
-            list = mdao.findByDeptNameLike("%" + option + "%");
-        } else {
-            list = mdao.findAll();
-        }
-        return list;
-    }
+//    public List<Member> getByOption2(String type, String option) {
+//
+//        List<Member> list = new ArrayList<Member>();
+//        if (Objects.equals("name", type)) {
+//            list = mdao.findByNameLike("%" + option + "%");
+//        } else if (Objects.equals("newNo", type)) {
+//            list = mdao.findByNewNoLike("%" + option + "%");
+//        } else if (Objects.equals("companyRankName", type)) {
+//            list = mdao.findByCompanyRankNameLike("%" + option + "%");
+//        } else if (Objects.equals("deptName", type)) {
+//            list = mdao.findByDeptNameLike("%" + option + "%");
+//        } else {
+//            list = mdao.findAll();
+//        }
+//        return list;
+//    }
 
     // 페이징 옵션으로 검색
-   /* public Page<MemberDto> getByOption(String type, String option, int page) {
+    public Page<MemberDto> getByOption(String type, String option, int page) {
         Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "companyRank"));
         Page<Member> list;
         if (Objects.equals("name", type)) {
@@ -64,6 +64,6 @@ public class EmployeeService {
             list = mdao.findAll(pageable);
         }
         return list.map(MemberDto::of);
-    }*/
+    }
 
 }

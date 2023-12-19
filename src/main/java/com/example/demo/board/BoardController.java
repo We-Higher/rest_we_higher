@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -77,16 +78,21 @@ public class BoardController {
 	}
 	
     // 옵션으로 검색
-    @GetMapping("/search")
-    public Map getbyOption(String type, String option) {
+	@GetMapping("/search")
+	public Map getbyOption(String type, String option, @RequestParam(value = "page", defaultValue = "1") int page) {
 		Map map = new HashMap();
-        System.out.println(type);
-        System.out.println(option);
-        List<Board> list = bservice.getByOption2(type, option);
-		map.put("list", list);
+		System.out.println(type);
+		System.out.println(option);
+
+		Page<BoardDto> paging = bservice.getByOption(type, option, page - 1);
+		map.put("currentPage", page);  // 현재 페이지 번호
+		map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
+		map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
+		map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
+		map.put("list", paging.getContent());  // 현재 페이지의 내용
 		return map;
-    }
-    
+	}
+
 	// 글 상세페이지
 	@RequestMapping("/{num}")
 	public Map get(@PathVariable("num") int num) {

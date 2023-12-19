@@ -1,5 +1,6 @@
 package com.example.demo.dataroom;
 
+import com.example.demo.board.BoardDto;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,17 +57,30 @@ public class DataroomService {
     }
     
     // 옵션으로 검색
-    public List<Dataroom> getByOption2(String type, String option) {
-       
-        List<Dataroom> list = new ArrayList<Dataroom>();
+//    public List<Dataroom> getByOption2(String type, String option) {
+//
+//        List<Dataroom> list = new ArrayList<Dataroom>();
+//        if (Objects.equals("name", type)) {
+//            list = dao.findByMemberNameLikeOrderByNumDesc("%" + option + "%");
+//        } else if (Objects.equals("title", type)) {
+//            list = dao.findByTitleLikeOrderByNumDesc("%" + option + "%");
+//        } else {
+//            list = dao.findAll(Sort.by(Sort.Direction.DESC, "num"));
+//        }
+//        return list;
+//    }
+
+    public Page<DataroomDto> getByOption(String type, String option, int page) {
+        Pageable pageable = PageRequest.of(page, 10, Sort.by(Sort.Direction.DESC, "num"));
+        Page<Dataroom> list;
         if (Objects.equals("name", type)) {
-            list = dao.findByMemberNameLikeOrderByNumDesc("%" + option + "%");
+            list = dao.findByMemberNameLike("%" + option + "%", pageable);
         } else if (Objects.equals("title", type)) {
-            list = dao.findByTitleLikeOrderByNumDesc("%" + option + "%");
+            list = dao.findByTitleLike("%" + option + "%", pageable);
         } else {
-            list = dao.findAll(Sort.by(Sort.Direction.DESC, "num"));
+            list = dao.findAll(pageable);
         }
-        return list;
+        return list.map(DataroomDto::of);
     }
 
     public void delDataroom(int num) {
