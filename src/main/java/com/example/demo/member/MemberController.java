@@ -253,4 +253,16 @@ public class MemberController {
 		}
 		return map;
 	}
+
+	@GetMapping("/member")
+	public Map getMember() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String id = authentication.getName();
+		MemberDto m = service.getMember(id);
+
+		Map map = new HashMap();
+		map.put("member", m);
+
+		return map;
+	}
 }
