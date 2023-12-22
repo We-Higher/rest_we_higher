@@ -15,68 +15,61 @@ import org.springframework.util.StringUtils;
 
 import java.io.IOException;
 
-@Slf4j
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MailService {
     private final JavaMailSender emailSender;
 
-    public void sendMultipleMessage(MailDto mailDto) throws MessagingException, IOException, TemplateException {
-        // file 객체 널 체크
-        if (mailDto.getF() == null || mailDto.getF().isEmpty()) {
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
+    public void sendMultipleMessage(MailDto mailDto) {
+        String[] recipients = mailDto.getAddress();
 
-            //메일 제목 설정
-            helper.setSubject(mailDto.getTitle().strip());
+        if (recipients != null && recipients.length > 0) {
+            for (String recipient : recipients) {
+                try {
+                    if (isValidEmailAddress(recipient)) {
+                        MimeMessage message = emailSender.createMimeMessage();
+                        MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
-            //참조자 설정
-            helper.setCc(mailDto.getCcAddress());
+                        // 메일 제목 설정
+                        helper.setSubject(mailDto.getTitle().strip());
 
-            helper.setText(mailDto.getContent().strip(), false);
+                        // 참조자 설정
+                        if (mailDto.getCcAddress() != null) {
+                            helper.setCc(mailDto.getCcAddress());
+                        }
 
-            helper.setFrom(mailDto.getFrom().strip());
+                        helper.setText(mailDto.getContent().strip(), false);
 
-            //수신자 한번에 전송
-            helper.setTo(mailDto.getAddress());
-            emailSender.send(message);
+                        helper.setFrom(mailDto.getFrom().strip());
+                        helper.setTo(recipient.trim());
 
-            // 파일이 없는 경우에 대한 처리
-            log.warn("No file provided for email attachment. Sending email without attachment.");
+                        // 파일이 있는 경우에는 첨부 파일 추가
+                        if (mailDto.getF() != null && !mailDto.getF().isEmpty()) {
+                            String fileName = StringUtils.cleanPath(mailDto.getF().getOriginalFilename().strip());
+                            helper.addAttachment(MimeUtility.encodeText(fileName, "UTF-8", "B"),
+                                    new ByteArrayResource(IOUtils.toByteArray(mailDto.getF().getInputStream())));
+                        }
 
-            // 파일이 없다면 첨부 파일을 추가하지 않음
-        } else {
-            // 파일이 있는 경우에는 첨부 파일을 추가
-            MimeMessage message = emailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-            //메일 제목 설정
-            helper.setSubject(mailDto.getTitle().strip());
-
-            //참조자 설정
-            helper.setCc(mailDto.getCcAddress());
-
-            helper.setText(mailDto.getContent().strip(), false);
-
-            helper.setFrom(mailDto.getFrom().strip());
-
-            //첨부 파일 설정
-            String fileName = StringUtils.cleanPath(mailDto.getF().getOriginalFilename().strip());
-
-            helper.addAttachment(MimeUtility.encodeText(fileName, "UTF-8", "B"), new ByteArrayResource(IOUtils.toByteArray(mailDto.getF().getInputStream())));
-
-            // 수신자 개별 전송
-            for (String s : mailDto.getAddress()) {
-                s.strip();
-                helper.setTo(s);
-                emailSender.send(message);
+                        // 메일 전송
+                        emailSender.send(message);
+                        log.info("Mail sent successfully to: {}", recipient);
+                    } else {
+                        log.error("Invalid email address: {}", recipient);
+                    }
+                } catch (MessagingException | IOException e) {
+                    // 메일 전송 중 오류가 발생한 경우 로깅
+                    log.error("Error sending mail to {}: {}", recipient, e.getMessage());
+                }
             }
-
-            //수신자 한번에 전송
-            helper.setTo(mailDto.getAddress());
-            emailSender.send(message);
-
-            log.info("Mail with attachment sent successfully.");
+        } else {
+            log.error("No recipients specified for the email.");
         }
     }
+
+    private boolean isValidEmailAddress(String email) {
+        // 간단한 이메일 유효성 검사 예시
+        return email.matches("^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$");
+    }
 }
+
