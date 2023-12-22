@@ -26,6 +26,26 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import net.coobird.thumbnailator.Thumbnails;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import javax.imageio.plugins.jpeg.JPEGImageWriteParam;
+import javax.imageio.stream.ImageOutputStream;
+import java.awt.image.BufferedImage;
+
+import net.coobird.thumbnailator.Thumbnails;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -210,7 +230,7 @@ public class MemberController {
         return map;
     }
 
-    @GetMapping("/image/{imageName}")
+    /*@GetMapping("/image/{imageName}")
     public ResponseEntity<byte[]> getImage(@PathVariable String imageName) throws IOException {
 
         Path imagePath = Paths.get(path, imageName);
@@ -218,6 +238,25 @@ public class MemberController {
         HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.IMAGE_JPEG);
         return new ResponseEntity<>(imageBytes, headers, HttpStatus.OK);
+    }*/
+   
+    @GetMapping("/image/{imageName}")
+    public ResponseEntity<byte[]> getImage(@PathVariable String imageName) throws IOException {
+        Path imagePath = Paths.get(path, imageName);
+
+        int width = 300;
+        int height = 320; 
+        byte[] originalImageBytes = Files.readAllBytes(imagePath);
+        ByteArrayInputStream bis = new ByteArrayInputStream(originalImageBytes);
+        BufferedImage originalImage = ImageIO.read(bis);
+        BufferedImage resizedImage = new BufferedImage(width, height, originalImage.getType());
+        resizedImage.getGraphics().drawImage(originalImage, 0, 0, width, height, null);
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        ImageIO.write(resizedImage, "jpg", baos);
+        byte[] resizedImageBytes = baos.toByteArray();
+        HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.IMAGE_JPEG);
+        return new ResponseEntity<>(resizedImageBytes, headers, HttpStatus.OK);
     }
 
     @GetMapping("/monthMemberList")
