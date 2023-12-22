@@ -76,6 +76,7 @@ public class DataroomController {
 
 		map.put("mdto", mdto);
 		map.put("currentPage", page);  // 현재 페이지 번호
+		map.put("paging", paging);
 		map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
 		map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
 		map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
@@ -95,6 +96,7 @@ public class DataroomController {
 
 		Page<DataroomDto> paging = dservice.getByOption(type, option, page - 1);
 		map.put("currentPage", page);  // 현재 페이지 번호
+		map.put("paging", paging);
 		map.put("hasNext", paging.hasNext());  // 다음 페이지가 있는지 여부
 		map.put("hasPrevious", paging.hasPrevious());  // 이전 페이지가 있는지 여부
 		map.put("totalPages", paging.getTotalPages());  // 전체 페이지 수
