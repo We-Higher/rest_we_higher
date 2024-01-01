@@ -1,6 +1,5 @@
 package com.example.demo.chat;
 
-import com.example.demo.auth.SecurityMember;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
@@ -26,7 +25,7 @@ public class ChatRoomController {
     @GetMapping("/invitation")
     public Map rooms() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        Member loginMember = (Member) authentication.getPrincipal();
         MemberDto mdto = memberService.getMember(loginMember.getUsername());
 
         List<MemberDto> mlist = memberService.getByIdNot(mdto.getId());
@@ -43,7 +42,7 @@ public class ChatRoomController {
     @ResponseBody
     public Map getByParticipantId() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        Member loginMember = (Member) authentication.getPrincipal();
         MemberDto mdto = memberService.getMember(loginMember.getUsername());
 
         Map map = new HashMap();
@@ -63,7 +62,7 @@ public class ChatRoomController {
     public Map createRoom(@RequestBody ChatRoomDto request) {
         System.out.println("participants = " + request.getParticipants());
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        Member loginMember = (Member) authentication.getPrincipal();
         MemberDto mdto = memberService.getMember(loginMember.getUsername());
 
         request.getParticipants().add(mdto);
@@ -87,7 +86,7 @@ public class ChatRoomController {
     @GetMapping("/room/{roomId}")
     public Map roomDetail(@PathVariable int roomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        Member loginMember = (Member) authentication.getPrincipal();
         MemberDto mdto = memberService.getMember(loginMember.getUsername());
 
         ChatRoomDto chatRoomDto = chatRoomService.getById(roomId);
@@ -114,7 +113,7 @@ public class ChatRoomController {
     @PostMapping("/room/out/{roomId}")
     public Map roomOut(@PathVariable int roomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        SecurityMember loginMember = (SecurityMember) authentication.getPrincipal();
+        Member loginMember = (Member) authentication.getPrincipal();
         MemberDto mdto = memberService.getMember(loginMember.getUsername());
         boolean flag = true;
 

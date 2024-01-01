@@ -1,27 +1,17 @@
 package com.example.demo.dataroom;
 
-import com.example.demo.auth.SecurityMember;
-import com.example.demo.board.Board;
-import com.example.demo.board.BoardDto;
-import com.example.demo.board.BoardService;
-import com.example.demo.employee.EmployeeService;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
-import lombok.RequiredArgsConstructor;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
-import org.springframework.http.ContentDisposition;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,22 +22,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.core.io.Resource;
-import org.springframework.core.io.InputStreamResource;
 
 import java.io.File;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.io.IOException;
-import java.net.URLEncoder;
-import java.nio.file.Files;
-import java.security.Principal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -121,7 +103,7 @@ public class DataroomController {
         boolean flag = true;
         DataroomDto res = null;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		SecurityMember member = (SecurityMember) authentication.getPrincipal();
+		Member member = (Member) authentication.getPrincipal();
         MemberDto mdto = mservice.getMember(member.getUsername());
         MultipartFile f = dto.getF();
         String fname = f.getOriginalFilename();

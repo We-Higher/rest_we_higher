@@ -1,5 +1,7 @@
 package com.example.demo.member;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.web.multipart.MultipartFile;
 
 import lombok.AllArgsConstructor;
@@ -8,6 +10,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Setter
 @Getter
@@ -39,7 +45,6 @@ public class MemberDto {//값 전달 용도 클래스
     private int remain; //연차 잔여일
     private int monthMember;
     private MultipartFile f;
-    // TODO multipart 추가
 
     public MemberDto toDto(Member member) {
         return MemberDto.builder()
@@ -94,5 +99,17 @@ public class MemberDto {//값 전달 용도 클래스
                 member.getMonthMember(),
                 null
         );
+    }
+
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // 권한들을 담을 빈 리스트
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        authorities.add(new SimpleGrantedAuthority(MemberRole.USER.getValue()));
+        if ("admin".equals(username) || isMaster == 1) {
+            authorities.add(new SimpleGrantedAuthority(MemberRole.ADMIN.getValue()));
+        }
+
+        return authorities;
     }
 }

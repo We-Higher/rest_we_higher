@@ -1,5 +1,8 @@
 package com.example.demo.member;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.example.demo.member.dto.MemberJoinDto;
@@ -17,6 +20,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
 @Entity  //jpa table
 @Setter
 @Getter
@@ -24,11 +31,11 @@ import lombok.ToString;
 @AllArgsConstructor
 @ToString
 @Builder
-public class Member {
+public class Member implements UserDetails {
     @Id
     @SequenceGenerator(name = "seq_gen", sequenceName = "seq_member1", allocationSize = 1)
     // 시퀀스 생성. 생성한 시퀀스 이름: seq_board
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_member1")
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "seq_gen")
     private Long id;
     @Column(unique = true)
     private String username; // 회원 ID
@@ -105,6 +112,55 @@ public class Member {
 
     public static Member of(MemberDto memberDto) {
         return new Member().toEntity(memberDto);
+    }
+
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        // 권한들을 담을 빈 리스트
+        List<GrantedAuthority> authorities = new ArrayList<>();
+
+        authorities.add(new SimpleGrantedAuthority(MemberRole.USER.getValue()));
+        if ("admin".equals(username) || isMaster == 1) {
+            authorities.add(new SimpleGrantedAuthority(MemberRole.ADMIN.getValue()));
+        }
+
+        return authorities;
+    }
+
+    // 사용자의 login id를 반환
+    @Override
+    public String getUsername() {
+        return username;
+    }
+
+    // 사용자의 패스워드를 반환
+    @Override
+    public String getPassword() {
+        return pwd;
+    }
+
+    // 계정 만료 여부 반환
+    @Override
+    public boolean isAccountNonExpired() {
+        return true; // true : 만료되지 않았음
+    }
+
+    // 계정 잠금 여부 반환
+    @Override
+    public boolean isAccountNonLocked() {
+        return true; // true : 잠금되지 않았음
+    }
+
+    // 패스워드의 만료 여부 반환
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true; // true : 만료되지 않았음
+    }
+
+    // 계정 사용 가능 여부 반환
+    @Override
+    public boolean isEnabled() {
+        return true; // true : 사용 가능
     }
 }
 

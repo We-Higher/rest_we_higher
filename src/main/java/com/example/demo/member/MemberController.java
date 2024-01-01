@@ -1,10 +1,10 @@
 package com.example.demo.member;
 
 import com.example.demo.auth.JwtTokenProvider;
+import com.example.demo.member.Member;
 import com.example.demo.member.dto.MemberJoinDto;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -36,41 +36,33 @@ import java.util.Map;
 @RestController // rest api controller
 @CrossOrigin(origins = "*") // 모든 ip로부터 요청 받기 허용
 public class MemberController {
-
     private final PasswordEncoder passwordEncoder;
-
-    @Autowired
-    private MemberService service;
-
-    @Autowired
-    private JwtTokenProvider tokenprovider;
-
-    @Autowired
-    private AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final MemberService service;
+    private final JwtTokenProvider tokenprovider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     @Value("${spring.servlet.multipart.location}")
     private String path;
 
     @PostMapping("/login")
     public Map login(String username, String password) {
-        System.out.println(username + " , " + password);
         UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username,
                 password);
-        System.out.println(authenticationToken);
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
-        System.out.println(authentication.isAuthenticated());
-        MemberDto dto = service.getMember(username);
         Map map = new HashMap();
         boolean flag = authentication.isAuthenticated();
-        System.out.println(flag);
+
         if (flag) {
-            String token = tokenprovider.generateJwtToken(new MemberDto(null, username, "", "", "", "", "", "", 0, "",
-                    0, "", "", "", 0, 0, 0, "", "", 0, 0, 0, null));
-            flag = true;
+            MemberDto dto = service.getMember(username);
+            String token = tokenprovider.generateJwtToken(new MemberDto().builder().username(username).build());
+
+            dto.setPwd("[PROTECTED]");
+
             map.put("token", token);
             map.put("dto", dto);
         }
         map.put("flag", flag);
+
         return map;
     }
 
@@ -275,6 +267,19 @@ public class MemberController {
 
         Map map = new HashMap();
         map.put("member", m);
+
+        return map;
+    }
+
+    @GetMapping("/test")
+    public Map getTest() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        Member loginMember = (Member) authentication.getPrincipal();
+
+        loginMember.setPwd("[PROTECTED]");
+
+        Map map = new HashMap();
+        map.put("member", loginMember);
 
         return map;
     }

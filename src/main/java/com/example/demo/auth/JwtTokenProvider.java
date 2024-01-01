@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.example.demo.member.Member;
+import com.example.demo.member.MemberService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -27,7 +29,7 @@ public class JwtTokenProvider {
 	//토큰 유효시간
 	private final Long expiredTime = 1000 * 60L * 60L * 1L; // 유효시간 1시간
 	Key key = Keys.hmacShaKeyFor("qwerqwersdfdsdgfsdgsdgfsfgsgafFSGHDFHJGFJGDFHSFGHSGFGDHFGJFGHJGFHJFHSFHDFGJHGJSFHSDHDHJFGHJGFHSFHGSFGHDFfgsdf".getBytes(StandardCharsets.UTF_8));
-	private final CustomUserDetailsService userDetailsService;
+	private final MemberService memberService;
 	
 	public String generateJwtToken(MemberDto member) {
 		Date now = new Date();
@@ -81,7 +83,7 @@ public class JwtTokenProvider {
 	
 	//인증
 	public Authentication getAuthentication(String token) {
-        UserDetails userDetails = userDetailsService.loadUserByUsername(this.getUsernameFromToken(token));
-        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
+        UserDetails member = memberService.loadUserByUsername(this.getUsernameFromToken(token));
+        return new UsernamePasswordAuthenticationToken(member, "", member.getAuthorities());
     }
 }
