@@ -22,7 +22,6 @@ import java.util.*;
 @RequestMapping("/auth/meetingroom")
 public class MeetingroomController {
     private final MeetingroomService service;
-    private final MemberService memberService;
 
     //목록
     @GetMapping("")
@@ -64,12 +63,10 @@ public class MeetingroomController {
         LocalDateTime endDate = LocalDateTime.parse(endDateString, dateTimeFormatter);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        MemberDto mdto = memberService.getMember(id);
-        Member member = new Member().toEntity(mdto);
+        Member user = (Member) authentication.getPrincipal();
 
         MeetingroomDto dto = MeetingroomDto.builder()
-                .member(member).title(title).startDate(startDate).endDate(endDate).roomId(roomId)
+                .member(user).title(title).startDate(startDate).endDate(endDate).roomId(roomId)
                 .build();
         MeetingroomDto s = service.save(dto);
         Map map = new HashMap();
@@ -90,8 +87,8 @@ public class MeetingroomController {
     public Map del(@PathVariable("id") int id) {
         MeetingroomDto origin = service.get(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        MemberDto mdto = memberService.getMember(username);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
 
         Map map = new HashMap();
 
@@ -139,15 +136,13 @@ public class MeetingroomController {
         LocalDateTime endDate = LocalDateTime.parse(endDateString, dateTimeFormatter);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        MemberDto mdto = memberService.getMember(username);
-        Member member = new Member().toEntity(mdto);
+        Member user = (Member) authentication.getPrincipal();
 
         MeetingroomDto dto = MeetingroomDto.builder()
-                .id(id).member(member).title(origin.getTitle()).startDate(startDate).endDate(endDate).roomId(roomId)
+                .id(id).member(user).title(origin.getTitle()).startDate(startDate).endDate(endDate).roomId(roomId)
                 .build();
 
-        if (member.getId().equals(origin.getMember().getId())) {
+        if (user.getId().equals(origin.getMember().getId())) {
             MeetingroomDto s = service.save(dto);
 
             map.put("cal_Id", s.getId());
@@ -155,7 +150,7 @@ public class MeetingroomController {
             map.put("start", s.getStartDate());
             map.put("end", s.getEndDate());
 
-        } else if (member.getIsMaster() == 1) {
+        } else if (user.getIsMaster() == 1) {
             MeetingroomDto s = service.save(dto);
 
             map.put("cal_Id", s.getId());

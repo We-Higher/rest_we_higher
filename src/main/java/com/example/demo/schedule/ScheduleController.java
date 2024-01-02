@@ -30,8 +30,8 @@ public class ScheduleController {
     @GetMapping("")
     public ArrayList<Map<String, Object>> list() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        MemberDto mdto = memberService.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
 
         ArrayList<ScheduleDto> scheduleList = (mdto.getIsMaster() == 1) ? service.getAll() : service.getByMemberOrCnt(new Member().toEntity(mdto), 1);
 
@@ -76,8 +76,8 @@ public class ScheduleController {
         LocalDateTime endDate = LocalDateTime.parse(endDateString, dateTimeFormatter);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        MemberDto mdto = memberService.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         Member member = new Member().toEntity(mdto);
         ScheduleDto dto = ScheduleDto.builder().member(member).title(title).startDate(startDate).endDate(endDate)
                 .build();
@@ -126,8 +126,8 @@ public class ScheduleController {
         LocalDateTime endDate = LocalDateTime.parse(endDateString, dateTimeFormatter);
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        MemberDto mdto = memberService.getMember(username);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         Member member = new Member().toEntity(mdto);
 
         ScheduleDto dto = ScheduleDto.builder().member(member).id(id).title(origin.getTitle()).startDate(startDate)
@@ -161,11 +161,9 @@ public class ScheduleController {
     @DeleteMapping("/{id}")
     @ResponseBody
     public Map del(@PathVariable("id") int id) {
-        Schedule entity = dao.findById(id).orElse(null);
         ScheduleDto origin = service.get(id);
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName();
-        MemberDto mdto = memberService.getMember(username);
+        Member user = (Member) authentication.getPrincipal();
 
         Map map = new HashMap();
 
@@ -174,7 +172,7 @@ public class ScheduleController {
         if (origin.getCnt() == 0) {
             service.del(id);
         } else {
-            if (new Member().toEntity(mdto).getIsMaster() == 0) {
+            if (user.getIsMaster() == 0) {
                 String msg = "관리자만 삭제 가능합니다.";
                 map.put("msg", msg);
                 flag = false;

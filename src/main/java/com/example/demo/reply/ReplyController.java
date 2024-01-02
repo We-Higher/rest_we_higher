@@ -50,8 +50,8 @@ public class ReplyController {
 
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		Member member = new Member().toEntity(mdto);
 		int num = Integer.parseInt((String) param.get(0).get("com_bno"));
 		String content = (String) param.get(0).get("com_content");

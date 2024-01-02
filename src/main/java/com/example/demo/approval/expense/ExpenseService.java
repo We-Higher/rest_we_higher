@@ -45,8 +45,8 @@ public class ExpenseService {
     public ArrayList<ExpenseDto> getMy(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Expense> list = (ArrayList<Expense>) dao.findByMemberUsernameOrderByExpenseNumDesc(mdto.getUsername());
         ArrayList<ExpenseDto> list2 = new ArrayList<>();
         for(Expense e : list){
@@ -58,8 +58,8 @@ public class ExpenseService {
     public ArrayList<ExpenseDto> getMyProcess(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Expense> list = (ArrayList<Expense>) dao.findByApp1usernameAndStatusAndRstatusOrderByExpenseNumDesc(mdto.getUsername(),0,0);
         ArrayList<Expense> listt = (ArrayList<Expense>) dao.findByApp2usernameAndStatusAndRstatusOrderByExpenseNumDesc(mdto.getUsername(),0,0);
         ArrayList<Expense> listtt = (ArrayList<Expense>) dao.findByApp2usernameAndStatusAndRstatusOrderByExpenseNumDesc(mdto.getUsername(),1,0);
@@ -80,8 +80,8 @@ public class ExpenseService {
     public ArrayList<ExpenseDto> getMyRefuse(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Expense> list = (ArrayList<Expense>) dao.findByMemberUsernameAndRstatusOrderByExpenseNumDesc(mdto.getUsername(), -1);
         ArrayList<ExpenseDto> list2 = new ArrayList<>();
         for(Expense e : list){

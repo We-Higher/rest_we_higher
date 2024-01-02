@@ -54,8 +54,8 @@ public class CommuteController {
 	@GetMapping("")
 	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		
 		Map map = new HashMap();
 		Page<Commute> paging = this.cservice.getList(page - 1);
@@ -74,8 +74,8 @@ public class CommuteController {
 	@GetMapping("/mycommute")
 	public Map mycommute() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		ArrayList<CommuteDto> list = cservice.getMyList(mdto.getId());
 		Map map = new HashMap();
 		map.put("mdto", mdto);
@@ -128,8 +128,8 @@ public class CommuteController {
 
 		boolean flag = false;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
 		String formattedTime1 = LocalDateTime.now().format(formatter1);
@@ -166,8 +166,8 @@ public class CommuteController {
 
 		boolean flag = false;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 		DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("HH:mm");
 		String formattedTime1 = LocalDateTime.now().format(formatter1);

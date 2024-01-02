@@ -2,6 +2,7 @@ package com.example.demo.approval.vacation;
 
 import com.example.demo.approval.report.Report;
 import com.example.demo.approval.report.ReportDto;
+import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 
@@ -59,8 +60,8 @@ public class VacationService {
     public ArrayList<VacationDto> getMy(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findByMemberUsernameOrderByVacationNumDesc(mdto.getUsername());
         ArrayList<VacationDto> list2 = new ArrayList<>();
         for (Vacation v : list) {
@@ -72,8 +73,8 @@ public class VacationService {
     public ArrayList<VacationDto> getMyProcess(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findByApp1usernameAndStatusAndRstatusOrderByVacationNumDesc(mdto.getUsername(),0,0);
         ArrayList<Vacation> listt = (ArrayList<Vacation>) dao.findByApp2usernameAndStatusAndRstatusOrderByVacationNumDesc(mdto.getUsername(),0,0);
         ArrayList<Vacation> listtt = (ArrayList<Vacation>) dao.findByApp2usernameAndStatusAndRstatusOrderByVacationNumDesc(mdto.getUsername(),1,0);
@@ -93,8 +94,8 @@ public class VacationService {
     public ArrayList<VacationDto> getMyRefuse(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Vacation> list = (ArrayList<Vacation>) dao.findByMemberUsernameAndRstatusOrderByVacationNumDesc(mdto.getUsername(), -1);
         ArrayList<VacationDto> list2 = new ArrayList<>();
         for (Vacation v : list) {

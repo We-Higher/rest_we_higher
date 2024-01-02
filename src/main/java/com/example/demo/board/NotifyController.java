@@ -3,6 +3,7 @@ package com.example.demo.board;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
@@ -16,23 +17,21 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth/notify")
 public class NotifyController {
-	@Autowired
-	private BoardService bservice;
-
-	@Autowired
-	private MemberService mservice;
+	private final BoardService bservice;
+	private final MemberService mservice;
 
 	//공지사항 목록
 	@GetMapping("/list")
 	public Map Notifylist() {
-		ArrayList<NotifyDto> list = bservice.getAllnotify();
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
+		ArrayList<NotifyDto> list = bservice.getAllnotify();
 		map.put("mdto", mdto);
 		map.put("list", list);
 		return map;
@@ -42,8 +41,8 @@ public class NotifyController {
 	@GetMapping("")
 	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 
 		Page<Notify> paging = this.bservice.getNotifyList(page - 1);
 		Map map = new HashMap();
@@ -82,8 +81,8 @@ public class NotifyController {
 		ArrayList<NotifyDto> list = bservice.getAllnotify();
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("list", list);
 		return map;
@@ -112,10 +111,10 @@ public class NotifyController {
 		Map map = new HashMap();
 		NotifyDto b = bservice.getNotify(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto m = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		bservice.editCnt2(num);
-		map.put("m,", m);
+		map.put("m,", mdto);
 		map.put("dto", b);
 		return map;
 	}

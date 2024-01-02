@@ -50,8 +50,8 @@ public class DataroomController {
 	@GetMapping("")
 	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 
 		Map map = new HashMap();
 		Page<Dataroom> paging = this.dservice.getList(page - 1);
@@ -90,8 +90,8 @@ public class DataroomController {
 	public Map DataAdd() {
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		return map;
 	}
@@ -103,8 +103,8 @@ public class DataroomController {
         boolean flag = true;
         DataroomDto res = null;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		Member member = (Member) authentication.getPrincipal();
-        MemberDto mdto = mservice.getMember(member.getUsername());
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
         MultipartFile f = dto.getF();
         String fname = f.getOriginalFilename();
         dto.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(), mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(), mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(), mdto.getIsMaster(), mdto.getStatus(), mdto.getCstatus(), mdto.getOriginFname(), mdto.getThumbnailFname(), mdto.getNewMemNo(), mdto.getRemain(),mdto.getMonthMember()));
@@ -141,9 +141,9 @@ public class DataroomController {
 		Map map = new HashMap();
 		DataroomDto d = dservice.getDataroom(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto m = mservice.getMember(id);
-		map.put("m,", m);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
+		map.put("m,", mdto);
 		map.put("dto", d);
 		return map;
 	}

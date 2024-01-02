@@ -68,18 +68,19 @@ public class MemberController {
 
     @GetMapping("/auth/mypage")
     public Map mypage() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Map map = new HashMap();
         boolean flag = true;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();// 로그인 아이디 추출
-        MemberDto mdto = service.getMember(id);
-        System.out.println(mdto);
-        if (mdto == null) {
+
+        if (!authentication.isAuthenticated()) {
             flag = false;
         } else {
+            Member user = (Member) authentication.getPrincipal();
+            MemberDto mdto = new MemberDto().toDto(user);
             map.put("mdto", mdto);
         }
         map.put("flag", flag);
+
         return map;
     }
 
@@ -93,18 +94,19 @@ public class MemberController {
 
     @GetMapping("/auth/info")
     public Map myinfo() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         Map map = new HashMap();
         boolean flag = true;
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();// 로그인 아이디 추출
-        MemberDto m = service.getMember(id);
-        System.out.println(m);
-        if (m == null) {
+
+        if (!authentication.isAuthenticated()) {
             flag = false;
         } else {
-            map.put("m", m);
+            Member user = (Member) authentication.getPrincipal();
+            MemberDto mdto = new MemberDto().toDto(user);
+            map.put("m", mdto);
         }
         map.put("flag", flag);
+
         return map;
     }
 
@@ -157,41 +159,45 @@ public class MemberController {
 
     @PutMapping("/auth/pwdedit")
     public Map pwdedit(MemberDto dto) {
-
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        MemberDto m = service.getMember(id);
-        if (dto.getF() != null) {
-            MultipartFile f = dto.getF();
-            String fname = f.getOriginalFilename();
-            File newFile = new File(path + fname);
-            try {
-                f.transferTo(newFile);
-                m.setOriginFname(fname);
-            } catch (IllegalStateException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-        System.out.println("test" + dto.getF());
-
-        m.setUsername(dto.getUsername());
-        m.setPwd(passwordEncoder.encode(dto.getPwd()));
-        m.setName(dto.getName());
-        m.setCompanyName(dto.getCompanyName());
-        m.setDeptCode(dto.getDeptCode());
-        m.setCompanyRank(dto.getCompanyRank());
-        m.setNewNo(dto.getNewNo());
-        m.setEmail(dto.getEmail());
-        m.setAddress(dto.getAddress());
-        m.setComCall(dto.getComCall());
-        m.setPhone(dto.getPhone());
-        m.setIsMaster(dto.getIsMaster());
-        m.setStatus(dto.getStatus());
-        service.save(m);
         Map map = new HashMap();
-        map.put("mdto", m);
+        boolean flag = true;
+
+        if (!authentication.isAuthenticated()) {
+            flag = false;
+        } else {
+            MemberDto m = service.getMember(dto.getUsername());
+
+            m.setPwd(passwordEncoder.encode(dto.getPwd()));
+            m.setName(dto.getName());
+            m.setCompanyName(dto.getCompanyName());
+            m.setDeptCode(dto.getDeptCode());
+            m.setCompanyRank(dto.getCompanyRank());
+            m.setNewNo(dto.getNewNo());
+            m.setEmail(dto.getEmail());
+            m.setAddress(dto.getAddress());
+            m.setComCall(dto.getComCall());
+            m.setPhone(dto.getPhone());
+            m.setIsMaster(dto.getIsMaster());
+            m.setStatus(dto.getStatus());
+            if (dto.getF() != null) {
+                MultipartFile f = dto.getF();
+                String fname = f.getOriginalFilename();
+                File newFile = new File(path + fname);
+                try {
+                    f.transferTo(newFile);
+                    m.setOriginFname(fname);
+                } catch (IllegalStateException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            MemberDto mdto = service.save(m);
+            map.put("mdto", mdto);
+        }
+        map.put("flag", flag);
         return map;
     }
 
@@ -234,8 +240,8 @@ public class MemberController {
             }
         }
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        MemberDto mdto = service.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         Map map = new HashMap();
         map.put("mdto", mdto);
         map.put("list", list2);
@@ -262,11 +268,11 @@ public class MemberController {
     @GetMapping("/member")
     public Map getMember() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String id = authentication.getName();
-        MemberDto m = service.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
 
         Map map = new HashMap();
-        map.put("member", m);
+        map.put("member", mdto);
 
         return map;
     }
