@@ -45,8 +45,8 @@ public class ReportController {
 	public Map report() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		Map map = new HashMap();
 		map.put("mdto", mdto);
 		return map;
@@ -57,8 +57,8 @@ public class ReportController {
 	public Map addReport(ReportDto dto) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		dto.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(),
 				mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(),
 				mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(),
@@ -76,8 +76,8 @@ public class ReportController {
 		Map map = new HashMap();
 		ReportDto rdto = rservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("dto", rdto);
 		return map;
@@ -89,8 +89,8 @@ public class ReportController {
 		Map map = new HashMap();
 		ReportDto rdto = rservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("dto", rdto);
 		return map;
@@ -103,8 +103,8 @@ public class ReportController {
 		boolean flag = true;
 		ReportDto rdto = rservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
     	if(rdto.getRstatus()==0 && rdto.getStatus()==0 && rdto.getApp1username().equals(mdto.getUsername())){
     		rservice.approveReport(rdto, mdto);
     	}
@@ -127,8 +127,8 @@ public class ReportController {
 		boolean flag = true;
 		ReportDto rdto = rservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
     	if(rdto.getRstatus()==0 && rdto.getStatus()==0 && rdto.getApp1username().equals(mdto.getUsername())){
     		rservice.refuseReport(rdto, mdto);
     	}

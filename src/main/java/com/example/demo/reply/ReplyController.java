@@ -6,15 +6,10 @@ import com.example.demo.board.BoardService;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.ModelAndView;
 
-import com.example.demo.approval.report.ReportDto;
-import com.example.demo.auth.SecurityMember;
 import com.example.demo.member.MemberDto;
 
 import java.util.ArrayList;
@@ -55,8 +50,8 @@ public class ReplyController {
 
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		Member member = new Member().toEntity(mdto);
 		int num = Integer.parseInt((String) param.get(0).get("com_bno"));
 		String content = (String) param.get(0).get("com_content");

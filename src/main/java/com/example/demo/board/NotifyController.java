@@ -1,42 +1,37 @@
 package com.example.demo.board;
 
-import com.example.demo.auth.SecurityMember;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
+@RequiredArgsConstructor
 @CrossOrigin(origins = "*")
 @RequestMapping("/auth/notify")
 public class NotifyController {
-	@Autowired
-	private BoardService bservice;
-
-	@Autowired
-	private MemberService mservice;
+	private final BoardService bservice;
+	private final MemberService mservice;
 
 	//공지사항 목록
 	@GetMapping("/list")
 	public Map Notifylist() {
-		ArrayList<NotifyDto> list = bservice.getAllnotify();
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
+		ArrayList<NotifyDto> list = bservice.getAllnotify();
 		map.put("mdto", mdto);
 		map.put("list", list);
 		return map;
@@ -46,8 +41,8 @@ public class NotifyController {
 	@GetMapping("")
 	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 
 		Page<Notify> paging = this.bservice.getNotifyList(page - 1);
 		Map map = new HashMap();
@@ -86,8 +81,8 @@ public class NotifyController {
 		ArrayList<NotifyDto> list = bservice.getAllnotify();
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("list", list);
 		return map;
@@ -96,15 +91,16 @@ public class NotifyController {
 	//공지사항 추가
 	@PostMapping("/add")
 	public Map NotifyAdd2(NotifyDto b) {
-
         int check = 0;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		SecurityMember member = (SecurityMember) authentication.getPrincipal();
-        MemberDto mdto = mservice.getMember(member.getUsername());
-        b.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(), mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(), mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(), mdto.getIsMaster(), mdto.getStatus(), mdto.getCstatus(), mdto.getOriginFname(), mdto.getThumbnailFname(), mdto.getNewMemNo(), mdto.getRemain(), mdto.getMonthMember()));
+		Member member = (Member) authentication.getPrincipal();
+
+		b.setMember(member);
         NotifyDto d = bservice.saveNotify(b, check);
+
 		Map map = new HashMap();
 		map.put("dto", d);
+
 		return map;
 	}
 	
@@ -115,10 +111,10 @@ public class NotifyController {
 		Map map = new HashMap();
 		NotifyDto b = bservice.getNotify(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto m = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		bservice.editCnt2(num);
-		map.put("m,", m);
+		map.put("m,", mdto);
 		map.put("dto", b);
 		return map;
 	}

@@ -87,8 +87,8 @@ public class approvalController {
         ArrayList<ReportDto> rlist = rservice.getMyProcess();
         ArrayList<VacationDto> vlist = vservice.getMyProcess();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
 		Map map = new HashMap();
         map.put("mdto", mdto);
         map.put("elist", elist);

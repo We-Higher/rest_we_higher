@@ -43,8 +43,8 @@ public class ExpenseController {
 	@GetMapping("/expense")
 	public Map Expense() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		Map map = new HashMap();
 		map.put("mdto", mdto);
 		return map;
@@ -53,8 +53,8 @@ public class ExpenseController {
 	@PostMapping("/expense")
 	public Map addExpense(ExpenseDto dto) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		dto.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(),
 				mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(),
 				mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(),
@@ -72,8 +72,8 @@ public class ExpenseController {
 		Map map = new HashMap();
 		ExpenseDto edto = eservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("dto", edto);
 		return map;
@@ -85,8 +85,8 @@ public class ExpenseController {
 		Map map = new HashMap();
 		ExpenseDto edto = eservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("dto", edto);
 		return map;
@@ -99,8 +99,8 @@ public class ExpenseController {
 		boolean flag = true;
 		ExpenseDto edto = eservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
     	if(edto.getRstatus()==0 && edto.getStatus()==0 && edto.getApp1username().equals(mdto.getUsername())){
     		eservice.approveExpense(edto, mdto);
     	}
@@ -122,8 +122,8 @@ public class ExpenseController {
 		boolean flag = true;
 		ExpenseDto edto = eservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
     	if(edto.getRstatus()==0 && edto.getStatus()==0 && edto.getApp1username().equals(mdto.getUsername())){
     		eservice.refuseExpense(edto, mdto);
     	}

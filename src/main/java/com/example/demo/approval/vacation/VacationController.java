@@ -41,8 +41,8 @@ public class VacationController {
 	public Map Vacation() {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		Map map = new HashMap();
 		map.put("mdto", mdto);
 		return map;
@@ -52,8 +52,8 @@ public class VacationController {
 	public Map addVacation(VacationDto dto) {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		dto.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(),
 				mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(),
 				mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(),
@@ -71,8 +71,8 @@ public class VacationController {
 		Map map = new HashMap();
 		VacationDto vdto = vservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("dto", vdto);
 		return map;
@@ -84,8 +84,8 @@ public class VacationController {
 		Map map = new HashMap();
 		VacationDto vdto = vservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		map.put("dto", vdto);
 		return map;
@@ -98,8 +98,8 @@ public class VacationController {
 		boolean flag = true;
 		VacationDto vdto = vservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
     	if(vdto.getRstatus()==0 && vdto.getStatus()==0 && vdto.getApp1username().equals(mdto.getUsername())){
     		vservice.approveVacation(vdto, mdto);
     	}
@@ -122,8 +122,8 @@ public class VacationController {
 		boolean flag = true;
 		VacationDto vdto = vservice.getById(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
     	if(vdto.getRstatus()==0 && vdto.getStatus()==0 && vdto.getApp1username().equals(mdto.getUsername())){
     		vservice.refuseVacation(vdto, mdto);
     	}

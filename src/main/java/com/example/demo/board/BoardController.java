@@ -1,43 +1,38 @@
 package com.example.demo.board;
 
-import com.example.demo.auth.SecurityMember;
 import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
 @CrossOrigin(origins = "*")
+@RequiredArgsConstructor
 @RequestMapping("/auth/board")
 public class BoardController {
-
-	@Autowired
-	private BoardService bservice;
-
-	@Autowired
-	private MemberService mservice;
+	private final BoardService bservice;
+	private final MemberService mservice;
 	
 	// 글목록
 	@GetMapping("")
 	public Map list(@RequestParam(value = "page", defaultValue = "1") int page) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
+		Map map = new HashMap();
 
 		Page<Board> paging = this.bservice.getBoardList(page - 1);
-		Map map = new HashMap();
 
 		map.put("mdto", mdto);
 		map.put("currentPage", page);  // 현재 페이지 번호
@@ -56,8 +51,8 @@ public class BoardController {
 	public Map BoardAdd() {
 		Map map = new HashMap();
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		map.put("mdto", mdto);
 		return map;
 	}
@@ -68,8 +63,8 @@ public class BoardController {
 
         int check = 0;
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		SecurityMember member = (SecurityMember) authentication.getPrincipal();
-        MemberDto mdto = mservice.getMember(member.getUsername());
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
         b.setMember(new Member(mdto.getId(), mdto.getUsername(), mdto.getPwd(), mdto.getName(), mdto.getEmail(), mdto.getPhone(), mdto.getAddress(), mdto.getCompanyName(), mdto.getDeptCode(), mdto.getDeptName(), mdto.getCompanyRank(), mdto.getCompanyRankName(), mdto.getNewNo(), mdto.getComCall(), mdto.getIsMaster(), mdto.getStatus(), mdto.getCstatus(), mdto.getOriginFname(), mdto.getThumbnailFname(), mdto.getNewMemNo(), mdto.getRemain(), mdto.getMonthMember()));
 		BoardDto d = bservice.saveBoard(b, check);
 		Map map = new HashMap();
@@ -100,10 +95,10 @@ public class BoardController {
 		Map map = new HashMap();
 		BoardDto b = bservice.getBoard(num);
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto m = mservice.getMember(id);
+		Member user = (Member) authentication.getPrincipal();
+		MemberDto mdto = new MemberDto().toDto(user);
 		bservice.editCnt(num);
-		map.put("mdto,", m);
+		map.put("mdto,", mdto);
 		map.put("dto", b);
 		return map;
 	}

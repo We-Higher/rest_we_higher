@@ -2,6 +2,7 @@ package com.example.demo.approval.report;
 
 import com.example.demo.approval.expense.Expense;
 import com.example.demo.approval.expense.ExpenseDto;
+import com.example.demo.member.Member;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 
@@ -49,8 +50,8 @@ public class ReportService {
     public ArrayList<ReportDto> getMy(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Report> list = (ArrayList<Report>) dao.findByMemberUsernameOrderByReportNumDesc(mdto.getUsername());
         ArrayList<ReportDto> list2 = new ArrayList<>();
         for (Report r : list) {
@@ -62,8 +63,8 @@ public class ReportService {
     public ArrayList<ReportDto> getMyProcess(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Report> list = (ArrayList<Report>) dao.findByApp1usernameAndStatusAndRstatusOrderByReportNumDesc(mdto.getUsername(),0,0);
         ArrayList<Report> listt = (ArrayList<Report>) dao.findByApp2usernameAndStatusAndRstatusOrderByReportNumDesc(mdto.getUsername(),0,0);
         ArrayList<Report> listtt = (ArrayList<Report>) dao.findByApp2usernameAndStatusAndRstatusOrderByReportNumDesc(mdto.getUsername(),1,0);
@@ -83,8 +84,8 @@ public class ReportService {
     public ArrayList<ReportDto> getMyRefuse(){
     	
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String id = authentication.getName();
-		MemberDto mdto = mservice.getMember(id);
+        Member user = (Member) authentication.getPrincipal();
+        MemberDto mdto = new MemberDto().toDto(user);
         ArrayList<Report> list = (ArrayList<Report>) dao.findByMemberUsernameAndRstatusOrderByReportNumDesc(mdto.getUsername(), -1);
         ArrayList<ReportDto> list2 = new ArrayList<>();
         for (Report r : list) {

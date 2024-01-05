@@ -8,6 +8,8 @@ import org.springframework.context.annotation.Bean;
 import com.example.demo.member.MemberDto;
 import com.example.demo.member.MemberService;
 import com.example.demo.member.dto.MemberJoinDto;
+import org.springframework.security.crypto.factory.PasswordEncoderFactories;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @SpringBootApplication
 public class RestWeHire {
@@ -15,7 +17,12 @@ public class RestWeHire {
 	public static void main(String[] args) {
 		SpringApplication.run(RestWeHire.class, args);
 	}
-	
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return PasswordEncoderFactories.createDelegatingPasswordEncoder();
+    }
+
     @Bean
     public CommandLineRunner initData(MemberService memberService) {
         return (args) -> {
